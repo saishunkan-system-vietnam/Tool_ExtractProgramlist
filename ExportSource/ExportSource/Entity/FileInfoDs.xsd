@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="FileInfoDs" targetNamespace="http://tempuri.org/FileInfoDs.xsd" xmlns:mstns="http://tempuri.org/FileInfoDs.xsd" xmlns="http://tempuri.org/FileInfoDs.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="FileInfoDs" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="FileInfoDs" msprop:Generator_UserDSName="FileInfoDs">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="FileInfo" msprop:Generator_TableClassName="FileInfoDataTable" msprop:Generator_TableVarName="tableFileInfo" msprop:Generator_TablePropName="FileInfo" msprop:Generator_RowDeletingName="FileInfoRowDeleting" msprop:Generator_RowChangingName="FileInfoRowChanging" msprop:Generator_RowEvHandlerName="FileInfoRowChangeEventHandler" msprop:Generator_RowDeletedName="FileInfoRowDeleted" msprop:Generator_UserTableName="FileInfo" msprop:Generator_RowChangedName="FileInfoRowChanged" msprop:Generator_RowEvArgName="FileInfoRowChangeEvent" msprop:Generator_RowClassName="FileInfoRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="FileId" msprop:Generator_ColumnVarNameInTable="columnFileId" msprop:Generator_ColumnPropNameInRow="FileId" msprop:Generator_ColumnPropNameInTable="FileIdColumn" msprop:Generator_UserColumnName="FileId" type="xs:string" minOccurs="0" />
+              <xs:element name="FileUrl" msprop:Generator_ColumnVarNameInTable="columnFileUrl" msprop:Generator_ColumnPropNameInRow="FileUrl" msprop:Generator_ColumnPropNameInTable="FileUrlColumn" msprop:Generator_UserColumnName="FileUrl" type="xs:string" minOccurs="0" />
+              <xs:element name="FileName" msprop:Generator_ColumnVarNameInTable="columnFileName" msprop:Generator_ColumnPropNameInRow="FileName" msprop:Generator_ColumnPropNameInTable="FileNameColumn" msprop:Generator_UserColumnName="FileName" type="xs:string" minOccurs="0" />
+              <xs:element name="CreateDate" msprop:nullValue="_empty" msprop:Generator_ColumnPropNameInRow="CreateDate" msprop:Generator_ColumnVarNameInTable="columnCreateDate" msprop:Generator_ColumnPropNameInTable="CreateDateColumn" msprop:Generator_UserColumnName="CreateDate" type="xs:string" minOccurs="0" />
+              <xs:element name="LastModificationDate" msprop:nullValue="_empty" msprop:Generator_ColumnPropNameInRow="LastModificationDate" msprop:Generator_ColumnVarNameInTable="columnLastModificationDate" msprop:Generator_ColumnPropNameInTable="LastModificationDateColumn" msprop:Generator_UserColumnName="LastModificationDate" type="xs:string" minOccurs="0" />
+              <xs:element name="status" msprop:Generator_ColumnVarNameInTable="columnstatus" msprop:Generator_ColumnPropNameInRow="status" msprop:Generator_ColumnPropNameInTable="statusColumn" msprop:Generator_UserColumnName="status" type="xs:string" minOccurs="0" />
+              <xs:element name="checkexist" msprop:nullValue="_empty" msprop:Generator_ColumnPropNameInRow="checkexist" msprop:Generator_ColumnVarNameInTable="columncheckexist" msprop:Generator_ColumnPropNameInTable="checkexistColumn" msprop:Generator_UserColumnName="checkexist" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
