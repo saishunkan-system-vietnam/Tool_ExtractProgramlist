@@ -139,8 +139,8 @@ namespace ExportSource
                     //char key = Convert.ToChar(@"\");
                     List<string> lstFile = new List<string>();
 
-                    string path = @"C:\Project\SourceCode\Dev#H31-0174-015_SSV";
-                    //string path = this.txtSourcePath.Text;
+                    //string path = @"C:\Project\SourceCode\Dev#H31-0174-015_SSV";
+                    string path = this.txtSourcePath.Text;
                     int lengtpath = path.Length;
 
                     FileInfoDs fileInfoDs = new FileInfoDs();
@@ -239,11 +239,13 @@ namespace ExportSource
                 if (this.chkboxSelectOutPut.Checked == true)
                 {
                     this.dtGrvProgramList[7, row.Index].Value = true;
+                    this.checkBox1.Enabled = true;
 
                 }
                 else
                 {
                     this.dtGrvProgramList[7, row.Index].Value = false;
+                    this.checkBox1.Enabled = false;
                 }
             }
         }
@@ -439,20 +441,22 @@ namespace ExportSource
 
         #region PhuongDT
 
-        #region Button Export ProgramList click
+        #region Export Source and ProgramList
         /// <summary>
         /// Button Export ProgramList click
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btnExport_Click(object sender, EventArgs e)
-        {
+        {  
             if (dtGrvProgramList.Rows.Count > 0)
             {
+                #region Export Source
+
                 string saveFolderPath = string.Empty;
 
                 using (FolderBrowserDialog directchoosedlg = new FolderBrowserDialog())
-                { 
+                {
                     if (directchoosedlg.ShowDialog() == DialogResult.OK)
                     {
                         saveFolderPath = directchoosedlg.SelectedPath;
@@ -461,7 +465,7 @@ namespace ExportSource
                         {
                             if (Convert.ToBoolean(dgviewRow.Cells[7].Value) == true)
                             {
-                                this.checkBox1.Enabled = true;
+
                                 string openFile = string.Empty;
 
                                 if (radChkBySource.Checked == true)
@@ -485,7 +489,7 @@ namespace ExportSource
                                 string sourcePathSave = Convert.ToString(dgviewRow.Cells[3].Value);
                                 string sourcePathSaveCombine = string.Empty;
                                 string sourceFileNameSave = sourceFileNameOrigin;
-                               
+
                                 string temPath = saveFolderPath + sourcePathSave;
 
                                 if (!System.IO.Directory.Exists(temPath))
@@ -502,14 +506,22 @@ namespace ExportSource
                     }
                 }
 
+                #endregion
+
+                #region Export ProgramList
+
                 if (checkBox1.Checked == true)
                 {
                     this.ExportProgramList(saveFolderPath);
                 }
-            }
 
+                #endregion
+            }
         }
+
         #endregion
+
+        #region ExportProgramList
 
         private void ExportProgramList(string savePath)
         {
@@ -522,6 +534,9 @@ namespace ExportSource
                 Microsoft.Office.Interop.Excel.Worksheet currentWorksheet = (Microsoft.Office.Interop.Excel.Worksheet)currentWorkbook.ActiveSheet;
                 currentWorksheet.Columns.ColumnWidth = 18;
                 currentWorksheet.Name = "プログラム一覧";
+
+                currentWorksheet.Rows.Font.Name = "ＭＳ Ｐゴシック";
+                currentWorksheet.Rows.Font.Size = 11;
 
                 //***************************HEADER*****HEADER*****HEADER*****************************************************
                 //************************************************************************************************************
@@ -548,8 +563,8 @@ namespace ExportSource
                 currentWorksheet.Cells[3, 15] = DateTime.Now.ToString("yyyy/MM/dd") + " 現在";
 
                 // Căn chỉnh Header
-                headerColumnRange.Font.Name = "ＭＳ Ｐゴシック";
-                headerColumnRange.Font.Size = 11;
+                //headerColumnRange.Font.Name = "ＭＳ Ｐゴシック";
+                //headerColumnRange.Font.Size = 11;
                 headerColumnRange.Font.Color = 0xFF0000;
 
                 // Trang điểm cho Header
@@ -582,11 +597,10 @@ namespace ExportSource
                     for (rowIndex = 4; rowIndex < rowCount; rowIndex++)
                     {
 
-                        DataGridViewRow dgRow = dtGrvProgramList.Rows[rowIndex - 4];                        
+                        DataGridViewRow dgRow = dtGrvProgramList.Rows[rowIndex - 4];
 
                         if (Convert.ToBoolean(dgRow.Cells[7].Value) == false)
                         {
-                            this.checkBox1.Enabled = false;
                             continue;
                         }
 
@@ -682,6 +696,11 @@ namespace ExportSource
                 }
             }
         }
+
+        #endregion
+
+        #region FormattingExcelCells
+
         private void FormattingExcelCells(Microsoft.Office.Interop.Excel.Range range, string HTMLcolorCode, System.Drawing.Color fontColor, bool IsFontbool)
         {
             range.Interior.Color = System.Drawing.ColorTranslator.FromHtml(HTMLcolorCode);
@@ -691,6 +710,28 @@ namespace ExportSource
                 range.Font.Bold = IsFontbool;
             }
         }
+
+        #endregion
+
+        #region When click into checkbox in Grid
+
+        private void dtGrvProgramList_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            foreach (DataGridViewRow row in dtGrvProgramList.Rows)
+            {
+                if (Convert.ToBoolean(row.Cells[7].Value) == true)
+                {
+                    this.checkBox1.Enabled = true;
+                    break;
+                }
+                else
+                {
+                    this.checkBox1.Enabled = false;
+                }
+            }
+        }
+
+        #endregion
 
         #endregion
     }
