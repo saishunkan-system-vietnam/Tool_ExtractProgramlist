@@ -219,6 +219,7 @@ namespace ExportSource
             chkFileXaml.lstFileExt.Add(".cs");
             chkFileXaml.lstFileExt.Add(".sql");
             chkFileXaml.lstFileExt.Add(".xaml");
+            this.checkBox1.Enabled = false;
             //chkFileXaml.lstFileExt.Add(".xsd");
         }
 
@@ -237,11 +238,12 @@ namespace ExportSource
             {
                 if (this.chkboxSelectOutPut.Checked == true)
                 {
-                    this.dtGrvProgramList[5, row.Index].Value = true;
+                    this.dtGrvProgramList[7, row.Index].Value = true;
+
                 }
                 else
                 {
-                    this.dtGrvProgramList[5, row.Index].Value = false;
+                    this.dtGrvProgramList[7, row.Index].Value = false;
                 }
             }
         }
@@ -336,7 +338,7 @@ namespace ExportSource
         {
 
             FileInfoDs fileInfoDs = new FileInfoDs();
-            string repoDir =this.txtSourcePath.Text;
+            string repoDir = this.txtSourcePath.Text;
             using (var repo = new Repository(repoDir))
             {
 
@@ -364,7 +366,7 @@ namespace ExportSource
                         FileInfoDs.FileInfoRow fileInfoRow = fileInfoDs.FileInfo.NewFileInfoRow();
                         string strpath = ptc.Path.ToString();
 
-                        fileInfoRow.FileUrl = @"\" + strpath.Substring(0, strpath.LastIndexOf(key)).Replace(@"/",@"\");
+                        fileInfoRow.FileUrl = @"\" + strpath.Substring(0, strpath.LastIndexOf(key)).Replace(@"/", @"\");
                         fileInfoRow.FileName = strpath.Substring(strpath.LastIndexOf(key) + 1);
                         string c = fileInfoRow.FileName.Substring(fileInfoRow.FileName.IndexOf("."), fileInfoRow.FileName.Length - fileInfoRow.FileName.IndexOf("."));
 
@@ -435,6 +437,7 @@ namespace ExportSource
             this.txtSourcePath.BackColor = Color.White;
         }
 
+        #region PhuongDT
 
         #region Button Export ProgramList click
         /// <summary>
@@ -449,14 +452,16 @@ namespace ExportSource
                 string saveFolderPath = string.Empty;
 
                 using (FolderBrowserDialog directchoosedlg = new FolderBrowserDialog())
-                {
+                { 
                     if (directchoosedlg.ShowDialog() == DialogResult.OK)
                     {
+                        saveFolderPath = directchoosedlg.SelectedPath;
+
                         foreach (DataGridViewRow dgviewRow in dtGrvProgramList.Rows)
                         {
                             if (Convert.ToBoolean(dgviewRow.Cells[7].Value) == true)
                             {
-
+                                this.checkBox1.Enabled = true;
                                 string openFile = string.Empty;
 
                                 if (radChkBySource.Checked == true)
@@ -480,8 +485,7 @@ namespace ExportSource
                                 string sourcePathSave = Convert.ToString(dgviewRow.Cells[3].Value);
                                 string sourcePathSaveCombine = string.Empty;
                                 string sourceFileNameSave = sourceFileNameOrigin;
-
-                                saveFolderPath = directchoosedlg.SelectedPath;
+                               
                                 string temPath = saveFolderPath + sourcePathSave;
 
                                 if (!System.IO.Directory.Exists(temPath))
@@ -502,12 +506,11 @@ namespace ExportSource
                 {
                     this.ExportProgramList(saveFolderPath);
                 }
-            }          
+            }
 
         }
         #endregion
 
-        #region PhuongDT
         private void ExportProgramList(string savePath)
         {
             Microsoft.Office.Interop.Excel.Application excelApp = null;
@@ -540,31 +543,22 @@ namespace ExportSource
                 currentWorksheet.Cells[5, 15] = "Others";
 
                 // Định nghĩa phạm vi Header
-                
-
                 Microsoft.Office.Interop.Excel.Range headerColumnRange = currentWorksheet.get_Range("A5", "O5");
-                //Microsoft.Office.Interop.Excel.Range headerColumnRangeNo = currentWorksheet.get_Range("A5", "A5");
-                //headerColumnRangeNo.EntireColumn.AutoFit();
-
                 currentWorksheet.Range["A3"].Value = currentWorksheet.Name;
-
-                currentWorksheet.Range["A3"].ColumnWidth = 18;
-
-                currentWorksheet.Cells[3, 15] = DateTime.Now.ToString("yyyy/MM/dd") + "現在";
-
-                // excelCellrange = excelSheet.Range[excelSheet.Cells[1, 1], excelSheet.Cells[2, dataTable.Columns.Count]];
-                Microsoft.Office.Interop.Excel.Borders borderdetail;
+                currentWorksheet.Cells[3, 15] = DateTime.Now.ToString("yyyy/MM/dd") + " 現在";
 
                 // Căn chỉnh Header
-                headerColumnRange.Font.Bold = true;
+                headerColumnRange.Font.Name = "ＭＳ Ｐゴシック";
+                headerColumnRange.Font.Size = 11;
                 headerColumnRange.Font.Color = 0xFF0000;
-                //headerColumnRange.EntireColumn.AutoFit();
 
                 // Trang điểm cho Header
                 Microsoft.Office.Interop.Excel.Borders borderheader = headerColumnRange.Borders;
                 borderheader.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
                 borderheader.Weight = 2d;
                 FormattingExcelCells(headerColumnRange, "#CCFFCC", System.Drawing.Color.Black, true);
+                FormattingExcelCells(currentWorksheet.get_Range("I5", "K5"), "#FFFF00", System.Drawing.Color.Black, true);
+                FormattingExcelCells(currentWorksheet.get_Range("L5", "N5"), "#FF99FF", System.Drawing.Color.Black, true);
 
                 headerColumnRange.WrapText = true;
                 headerColumnRange.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
@@ -575,80 +569,84 @@ namespace ExportSource
                 //***************************DETAIL*****DETAIL*****DETAIL*****************************************************
                 //************************************************************************************************************
                 // Trường hợp có data trong Grid
+
                 if (this.dtGrvProgramList.Rows.Count > 0)
                 {
                     // Fill nội dung các row
                     int rowIndex = 0;
                     int rowCount = dtGrvProgramList.Rows.Count + 4;
+                    int rowNoExcel = 0;
                     Microsoft.Office.Interop.Excel.Range excelCellrange;
-
-                    for (rowIndex = 4; rowIndex < rowCount - 1; rowIndex++)
+                    Microsoft.Office.Interop.Excel.Borders borderdetail;
+                    rowNoExcel = 4;
+                    for (rowIndex = 4; rowIndex < rowCount; rowIndex++)
                     {
-                        DataGridViewRow dgRow = dtGrvProgramList.Rows[rowIndex - 4];
+
+                        DataGridViewRow dgRow = dtGrvProgramList.Rows[rowIndex - 4];                        
+
                         if (Convert.ToBoolean(dgRow.Cells[7].Value) == false)
                         {
+                            this.checkBox1.Enabled = false;
                             continue;
                         }
 
-                        for (int cellIndex = 0; cellIndex < dgRow.Cells.Count; cellIndex++)
-                        {
+                        // No.
+                        currentWorksheet.Cells[rowNoExcel + 2, 1] = rowNoExcel - 3;
 
-                            // No.
-                            currentWorksheet.Cells[rowIndex + 2, 1] = rowIndex - 3;
+                        // Date
+                        currentWorksheet.Cells[rowNoExcel + 2, 2] = DateTime.Now.ToString("yyyy/MM/dd");
 
-                            // Date
-                            currentWorksheet.Cells[rowIndex + 2, 2] = DateTime.Now.ToString("yyyy/MM/dd");
+                        // REP.
+                        currentWorksheet.Cells[rowNoExcel + 2, 3] = dgRow.Cells[1].Value;
 
-                            // REP.
-                            currentWorksheet.Cells[rowIndex + 2, 3] = dgRow.Cells[1].Value;
+                        // Project Name
+                        currentWorksheet.Cells[rowNoExcel + 2, 4] = dgRow.Cells[2].Value;
 
-                            // Project Name
-                            currentWorksheet.Cells[rowIndex + 2, 4] = dgRow.Cells[2].Value;
+                        // Path
+                        currentWorksheet.Cells[rowNoExcel + 2, 5] = dgRow.Cells[3].Value;
 
-                            // Path
-                            currentWorksheet.Cells[rowIndex + 2, 5] = dgRow.Cells[3].Value;
+                        // File
+                        currentWorksheet.Cells[rowNoExcel + 2, 6] = dgRow.Cells[4].Value;
 
-                            // File
-                            currentWorksheet.Cells[rowIndex + 2, 6] = dgRow.Cells[4].Value;
+                        // Function
+                        currentWorksheet.Cells[rowNoExcel + 2, 7] = string.Empty;
 
-                            // Function
-                            currentWorksheet.Cells[rowIndex + 2, 7] = string.Empty;
+                        // Add Update Delete
+                        currentWorksheet.Cells[rowNoExcel + 2, 8] = dgRow.Cells[5].Value;
 
-                            // Add Update Delete
-                            currentWorksheet.Cells[rowIndex + 2, 8] = dgRow.Cells[5].Value;
+                        // 1st Check Plan Date
+                        currentWorksheet.Cells[rowNoExcel + 2, 9] = string.Empty;
 
-                            // 1st Check Plan Date
-                            currentWorksheet.Cells[rowIndex + 2, 9] = string.Empty;
+                        // 1st Check REP
+                        currentWorksheet.Cells[rowNoExcel + 2, 10] = string.Empty;
 
-                            // 1st Check REP
-                            currentWorksheet.Cells[rowIndex + 2, 10] = string.Empty;
+                        // 1st Check Stats
+                        currentWorksheet.Cells[rowNoExcel + 2, 11] = string.Empty;
 
-                            // 1st Check Stats
-                            currentWorksheet.Cells[rowIndex + 2, 11] = string.Empty;
+                        // 受入検収 完了予定日
+                        currentWorksheet.Cells[rowNoExcel + 2, 12] = string.Empty;
 
-                            // 受入検収 完了予定日
-                            currentWorksheet.Cells[rowIndex + 2, 12] = string.Empty;
+                        // 受入検収 担当者
+                        currentWorksheet.Cells[rowNoExcel + 2, 13] = string.Empty;
 
-                            // 受入検収 担当者
-                            currentWorksheet.Cells[rowIndex + 2, 13] = string.Empty;
+                        // 受入検収 ｽﾃｰﾀｽ
+                        currentWorksheet.Cells[rowNoExcel + 2, 14] = string.Empty;
 
-                            // 受入検収 ｽﾃｰﾀｽ
-                            currentWorksheet.Cells[rowIndex + 2, 14] = string.Empty;
+                        // Others
+                        currentWorksheet.Cells[rowNoExcel + 2, 15] = string.Empty;
 
-                            // Others
-                            currentWorksheet.Cells[rowIndex + 2, 15] = string.Empty;
+                        excelCellrange = currentWorksheet.Range[currentWorksheet.Cells[6, 1], currentWorksheet.Cells[rowNoExcel + 2, 15]];
+                        borderdetail = excelCellrange.Borders;
+                        borderdetail.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                        borderdetail.Weight = 2d;
+                        excelCellrange.EntireColumn.AutoFit();
+                        excelCellrange.EntireRow.AutoFit();
 
-                            excelCellrange = currentWorksheet.Range[currentWorksheet.Cells[6, 1], currentWorksheet.Cells[rowIndex + 2, 15]];
-                            borderdetail = excelCellrange.Borders;
-                            borderdetail.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
-                            borderdetail.Weight = 2d;
-                            excelCellrange.EntireColumn.AutoFit();
-                            excelCellrange.EntireRow.AutoFit();
-                        }
+                        rowNoExcel++;
                     }
 
-                    //Microsoft.Office.Interop.Excel.Range excelCellrange;
-                    excelCellrange = currentWorksheet.Range[currentWorksheet.Cells[6, 1], currentWorksheet.Cells[rowIndex + 2, 15]];
+                    excelCellrange = currentWorksheet.Range[currentWorksheet.Cells[6, 1], currentWorksheet.Cells[rowNoExcel + 2, 15]];
+                    currentWorksheet.Range["A3"].EntireColumn.ColumnWidth = 5;
 
                     excelCellrange.WrapText = true;
                     excelCellrange.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
@@ -659,17 +657,11 @@ namespace ExportSource
                         exportSaveFileDialog.Title = "Select Excel File";
                         exportSaveFileDialog.Filter = "Microsoft Office Excel Workbook(*.xlsx)|*.xlsx";
 
-                        //if (DialogResult.OK == exportSaveFileDialog.ShowDialog())
-                        //{
-                        string fullFileName = savePath + @"\" +"ProgramList.xlsx";
-                        //currentWorkbook.SaveCopyAs(fullFileName);
-                        // indicating that we already saved the workbook, otherwise call to Quit() will pop up
-                        // the save file dialogue box
+                        string fullFileName = savePath + @"\" + "ProgramList.xlsx";
 
                         currentWorkbook.SaveAs(fullFileName, Microsoft.Office.Interop.Excel.XlFileFormat.xlOpenXMLWorkbook, System.Reflection.Missing.Value, System.Reflection.Missing.Value, false, false, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlNoChange, Microsoft.Office.Interop.Excel.XlSaveConflictResolution.xlUserResolution, true, System.Reflection.Missing.Value, System.Reflection.Missing.Value, System.Reflection.Missing.Value);
                         currentWorkbook.Saved = true;
                         MessageBox.Show("Export to Excel successful", "Exported to Excel", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        //}
                     }
                 }
                 else
