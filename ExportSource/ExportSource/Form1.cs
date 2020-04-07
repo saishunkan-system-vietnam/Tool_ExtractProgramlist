@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LibGit2Sharp;
 using Excel = Microsoft.Office.Interop.Excel;
-using Microsoft.Office.Core;
 
 namespace ExportSource
 {
