@@ -43,6 +43,14 @@
             this.grbProgramList = new System.Windows.Forms.GroupBox();
             this.chkboxSelectOutPut = new System.Windows.Forms.CheckBox();
             this.dtGrvProgramList = new System.Windows.Forms.DataGridView();
+            this.btnExport = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.directorySearcher1 = new System.DirectoryServices.DirectorySearcher();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.toolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.No = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Rep = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ProjectName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -53,14 +61,6 @@
             this.Check = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.CreateDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.UpdateDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btnExport = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.directorySearcher1 = new System.DirectoryServices.DirectorySearcher();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.toolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.grbSearchInf.SuspendLayout();
             this.grbProgramList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dtGrvProgramList)).BeginInit();
@@ -226,81 +226,6 @@
             this.dtGrvProgramList.TabIndex = 0;
             this.dtGrvProgramList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dtGrvProgramList_CellValueChanged);
             // 
-            // No
-            // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.No.DefaultCellStyle = dataGridViewCellStyle1;
-            this.No.HeaderText = "No";
-            this.No.Name = "No";
-            this.No.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.No.Width = 50;
-            // 
-            // Rep
-            // 
-            this.Rep.HeaderText = "Rep.";
-            this.Rep.Name = "Rep";
-            this.Rep.ReadOnly = true;
-            this.Rep.Visible = false;
-            // 
-            // ProjectName
-            // 
-            this.ProjectName.HeaderText = "Project Name";
-            this.ProjectName.Name = "ProjectName";
-            this.ProjectName.ReadOnly = true;
-            this.ProjectName.Visible = false;
-            // 
-            // PathFile
-            // 
-            this.PathFile.HeaderText = "Path";
-            this.PathFile.Name = "PathFile";
-            this.PathFile.ReadOnly = true;
-            this.PathFile.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.PathFile.Width = 350;
-            // 
-            // FileName
-            // 
-            this.FileName.HeaderText = "File Name";
-            this.FileName.Name = "FileName";
-            this.FileName.ReadOnly = true;
-            this.FileName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.FileName.Width = 250;
-            // 
-            // Status
-            // 
-            this.Status.HeaderText = "Status";
-            this.Status.Name = "Status";
-            this.Status.ReadOnly = true;
-            this.Status.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            // 
-            // CheckExist
-            // 
-            this.CheckExist.HeaderText = "Check exist";
-            this.CheckExist.Name = "CheckExist";
-            this.CheckExist.ReadOnly = true;
-            this.CheckExist.Width = 150;
-            // 
-            // Check
-            // 
-            this.Check.HeaderText = "";
-            this.Check.Name = "Check";
-            this.Check.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.Check.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.Check.Width = 50;
-            // 
-            // CreateDate
-            // 
-            this.CreateDate.HeaderText = "Create Date";
-            this.CreateDate.Name = "CreateDate";
-            this.CreateDate.ReadOnly = true;
-            // 
-            // UpdateDate
-            // 
-            this.UpdateDate.HeaderText = "UpdateDate";
-            this.UpdateDate.Name = "UpdateDate";
-            this.UpdateDate.ReadOnly = true;
-            this.UpdateDate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.UpdateDate.Width = 150;
-            // 
             // btnExport
             // 
             this.btnExport.Location = new System.Drawing.Point(1065, 780);
@@ -369,6 +294,83 @@
             this.checkBox1.TabIndex = 4;
             this.checkBox1.Text = "Export Program List";
             this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // No
+            // 
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.No.DefaultCellStyle = dataGridViewCellStyle1;
+            this.No.HeaderText = "No";
+            this.No.Name = "No";
+            this.No.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.No.Width = 50;
+            // 
+            // Rep
+            // 
+            this.Rep.HeaderText = "Rep.";
+            this.Rep.Name = "Rep";
+            this.Rep.ReadOnly = true;
+            this.Rep.Visible = false;
+            // 
+            // ProjectName
+            // 
+            this.ProjectName.HeaderText = "Project Name";
+            this.ProjectName.Name = "ProjectName";
+            this.ProjectName.ReadOnly = true;
+            this.ProjectName.Visible = false;
+            // 
+            // PathFile
+            // 
+            this.PathFile.HeaderText = "Path";
+            this.PathFile.Name = "PathFile";
+            this.PathFile.ReadOnly = true;
+            this.PathFile.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.PathFile.Width = 350;
+            // 
+            // FileName
+            // 
+            this.FileName.HeaderText = "File Name";
+            this.FileName.Name = "FileName";
+            this.FileName.ReadOnly = true;
+            this.FileName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.FileName.Width = 250;
+            // 
+            // Status
+            // 
+            this.Status.HeaderText = "Status";
+            this.Status.Name = "Status";
+            this.Status.ReadOnly = true;
+            this.Status.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
+            // CheckExist
+            // 
+            this.CheckExist.HeaderText = "Check exist";
+            this.CheckExist.Name = "CheckExist";
+            this.CheckExist.ReadOnly = true;
+            this.CheckExist.Width = 150;
+            // 
+            // Check
+            // 
+            this.Check.HeaderText = "";
+            this.Check.Name = "Check";
+            this.Check.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Check.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.Check.Width = 50;
+            // 
+            // CreateDate
+            // 
+            this.CreateDate.HeaderText = "Create Date";
+            this.CreateDate.Name = "CreateDate";
+            this.CreateDate.ReadOnly = true;
+            this.CreateDate.Visible = false;
+            // 
+            // UpdateDate
+            // 
+            this.UpdateDate.HeaderText = "UpdateDate";
+            this.UpdateDate.Name = "UpdateDate";
+            this.UpdateDate.ReadOnly = true;
+            this.UpdateDate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.UpdateDate.Visible = false;
+            this.UpdateDate.Width = 150;
             // 
             // Form1
             // 

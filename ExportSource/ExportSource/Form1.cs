@@ -139,8 +139,8 @@ namespace ExportSource
                     //char key = Convert.ToChar(@"\");
                     List<string> lstFile = new List<string>();
 
-                    //string path = @"C:\Project\SourceCode\Dev#H31-0174-015_SSV";
-                    string path = this.txtSourcePath.Text;
+                    string path = @"D:\PhuongDT_Company\Source in Git\Dev#H31-0174-015_SSV";
+                    //string path = this.txtSourcePath.Text;
                     int lengtpath = path.Length;
 
                     FileInfoDs fileInfoDs = new FileInfoDs();
@@ -162,8 +162,9 @@ namespace ExportSource
                         OleDbDataAdapter objDA = new System.Data.OleDb.OleDbDataAdapter(sql, conn);
                         DataSet excelDataSet = new DataSet();
                         objDA.Fill(excelDataSet, "TableColum");
-                        maxRow = excelDataSet.Tables[0].Rows.Count;
                         fileInfoDs = this.FindByProgramList(excelDataSet, path);
+
+                        maxRow = fileInfoDs.Tables[0].Rows.Count;
                     }
                     else if (this.radChkBySource.Checked == true)
                     {
@@ -302,7 +303,12 @@ namespace ExportSource
             FileInfoDs fileInfoDs = new FileInfoDs();
             foreach (DataRow row in excelDataSet.Tables[0].Rows)
             {
-                if (!string.IsNullOrEmpty(row["F6"].ToString()))
+                if(String.IsNullOrEmpty(row["F6"].ToString()))
+                {
+                    continue;
+                }    
+
+                if (row["F6"].ToString() != "File")
                 {
                     FileInfoDs.FileInfoRow fileInfoRow = fileInfoDs.FileInfo.NewFileInfoRow();
                     //lstFile.Add( fileName.Substring( fileName.LastIndexOf( key ) + 1 ) );
