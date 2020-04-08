@@ -167,14 +167,14 @@ namespace ExportSource
                     else if (this.radChkBySource.Checked == true)
                     {
                         fileInfoDs = this.FindBySource();
-                        maxRow = fileInfoDs.FileInfo.Rows.Count - 1;
+                        //maxRow = fileInfoDs.FileInfo.Rows.Count - 1;
                     }
                     if (fileInfoDs.FileInfo.Rows.Count <= 0)
                     {
                         return;
                     }
                     this.dtGrvProgramList.Rows.Clear();
-                    this.dtGrvProgramList.Rows.Add(maxRow);
+                    this.dtGrvProgramList.Rows.Add(fileInfoDs.FileInfo.Rows.Count);
 
                     foreach (FileInfoDs.FileInfoRow rows in fileInfoDs.FileInfo.Rows)
                     {
@@ -342,48 +342,41 @@ namespace ExportSource
             string repoDir = this.txtSourcePath.Text;
             using (var repo = new Repository(repoDir))
             {
-
-                List<string> shalist = new List<string>();
-                foreach (Commit c in repo.Commits)
+                foreach (Commit commit in repo.Commits.Where(x => x.Committer.When >= dtpkSinceCommitSource.Value.Date).OrderBy(x => x.Committer.When))
                 {
-                    DateTime since = dtpkSinceCommitSource.Value;
-                    DateTime untill = c.Author.When.Date;
-
-                    if (untill >= since)
+                    foreach (var parent in commit.Parents)
                     {
-                        shalist.Add(c.Sha.ToString());
-                    }
-                }
-
-                if (shalist.Count > 0)
-                {
-                    Tree cmTree1 = repo.Lookup<Commit>(shalist.First()).Tree;
-                    Tree cmTree2 = repo.Lookup<Commit>(shalist.Last()).Tree;
-
-                    var patch = repo.Diff.Compare<Patch>(cmTree1, cmTree2);
-
-                    foreach (var ptc in patch)
-                    {
-                        FileInfoDs.FileInfoRow fileInfoRow = fileInfoDs.FileInfo.NewFileInfoRow();
-                        string strpath = ptc.Path.ToString();
-
-                        fileInfoRow.FileUrl = @"\" + strpath.Substring(0, strpath.LastIndexOf(key)).Replace(@"/", @"\");
-                        fileInfoRow.FileName = strpath.Substring(strpath.LastIndexOf(key) + 1);
-                        string c = fileInfoRow.FileName.Substring(fileInfoRow.FileName.IndexOf("."), fileInfoRow.FileName.Length - fileInfoRow.FileName.IndexOf("."));
-
-                        if (chkFileXaml.lstFileExt.Contains(c))
+                        foreach (TreeEntryChanges change in repo.Diff.Compare<TreeChanges>(parent.Tree, commit.Tree))
                         {
-                            if (ptc.Status.ToString() == "Modified")
+                            FileInfoDs.FileInfoRow fileInfoRow = fileInfoDs.FileInfo.NewFileInfoRow();
+                            string strpath = change.Path.ToString();
+                            string strUrl = @"\" + strpath.Substring(0, strpath.LastIndexOf(key)).Replace(@"/", @"\");
+                            string strFileName = strpath.Substring(strpath.LastIndexOf(key) + 1);
+                            string status = string.Empty;
+                            if (change.Status.ToString() == "Modified")
                             {
-                                fileInfoRow.status = "Update";
+                                status = "Update";
                             }
                             else
                             {
-                                fileInfoRow.status = "Add";
+                                status = "Add";
                             }
-                            fileInfoRow.CreateDate = string.Empty;
-                            fileInfoDs.FileInfo.AddFileInfoRow(fileInfoRow);
-                            fileInfoRow.AcceptChanges();
+
+                            FileInfoDs.FileInfoRow rowFilter = fileInfoDs.FileInfo.Where(x=> x.FileUrl == strUrl && x.FileName == strFileName).FirstOrDefault();
+
+                            if(rowFilter == null)
+                            {
+                                fileInfoRow.FileUrl = strUrl;
+                                fileInfoRow.FileName = strFileName;
+
+                                if (chkFileXaml.lstFileExt.Contains(Path.GetExtension(strpath).Trim()))
+                                {
+                                    fileInfoRow.status = status;
+                                    fileInfoRow.CreateDate = commit.Committer.When.ToString("dd-MM-yyyy");
+                                    fileInfoDs.FileInfo.AddFileInfoRow(fileInfoRow);
+                                    fileInfoRow.AcceptChanges();
+                                }
+                            }
                         }
                     }
                 }
@@ -521,7 +514,6 @@ namespace ExportSource
         #endregion
 
         #region ExportProgramList
-
         private void ExportProgramList(string savePath)
         {
             Microsoft.Office.Interop.Excel.Application excelApp = null;
