@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.grbSearchInf = new System.Windows.Forms.GroupBox();
             this.dtpkSinceCommitSource = new System.Windows.Forms.DateTimePicker();
             this.radChkBySource = new System.Windows.Forms.RadioButton();
@@ -43,14 +43,6 @@
             this.grbProgramList = new System.Windows.Forms.GroupBox();
             this.chkboxSelectOutPut = new System.Windows.Forms.CheckBox();
             this.dtGrvProgramList = new System.Windows.Forms.DataGridView();
-            this.btnExport = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.directorySearcher1 = new System.DirectoryServices.DirectorySearcher();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.toolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.No = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Rep = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ProjectName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -61,10 +53,14 @@
             this.Check = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.CreateDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.UpdateDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnExport = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.grbSearchInf.SuspendLayout();
             this.grbProgramList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dtGrvProgramList)).BeginInit();
-            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // grbSearchInf
@@ -226,79 +222,10 @@
             this.dtGrvProgramList.TabIndex = 0;
             this.dtGrvProgramList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dtGrvProgramList_CellValueChanged);
             // 
-            // btnExport
-            // 
-            this.btnExport.Location = new System.Drawing.Point(1065, 780);
-            this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(101, 37);
-            this.btnExport.TabIndex = 2;
-            this.btnExport.Text = "Export ";
-            this.btnExport.UseVisualStyleBackColor = true;
-            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(1172, 780);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(101, 37);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Exit";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(957, 780);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(101, 37);
-            this.button3.TabIndex = 2;
-            this.button3.Text = "Clear";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // directorySearcher1
-            // 
-            this.directorySearcher1.ClientTimeout = System.TimeSpan.Parse("-00:00:01");
-            this.directorySearcher1.ServerPageTimeLimit = System.TimeSpan.Parse("-00:00:01");
-            this.directorySearcher1.ServerTimeLimit = System.TimeSpan.Parse("-00:00:01");
-            // 
-            // menuStrip1
-            // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1285, 24);
-            this.menuStrip1.TabIndex = 3;
-            this.menuStrip1.Text = "Menu";
-            // 
-            // toolToolStripMenuItem
-            // 
-            this.toolToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.settingToolStripMenuItem});
-            this.toolToolStripMenuItem.Name = "toolToolStripMenuItem";
-            this.toolToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
-            this.toolToolStripMenuItem.Text = "Tool";
-            // 
-            // settingToolStripMenuItem
-            // 
-            this.settingToolStripMenuItem.Name = "settingToolStripMenuItem";
-            this.settingToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
-            this.settingToolStripMenuItem.Text = "Setting";
-            this.settingToolStripMenuItem.Click += new System.EventHandler(this.settingToolStripMenuItem_Click);
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(1065, 744);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(117, 17);
-            this.checkBox1.TabIndex = 4;
-            this.checkBox1.Text = "Export Program List";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
             // No
             // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.No.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.No.DefaultCellStyle = dataGridViewCellStyle2;
             this.No.HeaderText = "No";
             this.No.Name = "No";
             this.No.Resizable = System.Windows.Forms.DataGridViewTriState.False;
@@ -372,19 +299,67 @@
             this.UpdateDate.Visible = false;
             this.UpdateDate.Width = 150;
             // 
+            // btnExport
+            // 
+            this.btnExport.Location = new System.Drawing.Point(1065, 780);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(101, 37);
+            this.btnExport.TabIndex = 2;
+            this.btnExport.Text = "Export ";
+            this.btnExport.UseVisualStyleBackColor = true;
+            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(1172, 780);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(101, 37);
+            this.button2.TabIndex = 2;
+            this.button2.Text = "Exit";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(957, 780);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(101, 37);
+            this.button3.TabIndex = 2;
+            this.button3.Text = "Clear";
+            this.button3.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(1065, 744);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(117, 17);
+            this.checkBox1.TabIndex = 4;
+            this.checkBox1.Text = "Export Program List";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(13, 771);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(101, 37);
+            this.button1.TabIndex = 5;
+            this.button1.Text = "Setting";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1285, 836);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.btnExport);
             this.Controls.Add(this.grbProgramList);
             this.Controls.Add(this.grbSearchInf);
-            this.Controls.Add(this.menuStrip1);
-            this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.grbSearchInf.ResumeLayout(false);
@@ -392,8 +367,6 @@
             this.grbProgramList.ResumeLayout(false);
             this.grbProgramList.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dtGrvProgramList)).EndInit();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -411,12 +384,8 @@
 		private System.Windows.Forms.Button btnOpenSourcePath;
 		private System.Windows.Forms.TextBox txtProgramLstPath;
 		private System.Windows.Forms.Button btnOpenProgramLstPath;
-		private System.DirectoryServices.DirectorySearcher directorySearcher1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.MenuStrip menuStrip1;
-		private System.Windows.Forms.ToolStripMenuItem toolToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem settingToolStripMenuItem;
 		private System.Windows.Forms.DataGridView dtGrvProgramList;
 		private System.Windows.Forms.CheckBox chkboxSelectOutPut;
 		private System.Windows.Forms.RadioButton radChkBySource;
@@ -433,6 +402,7 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn Check;
         private System.Windows.Forms.DataGridViewTextBoxColumn CreateDate;
         private System.Windows.Forms.DataGridViewTextBoxColumn UpdateDate;
+        private System.Windows.Forms.Button button1;
     }
 }
 

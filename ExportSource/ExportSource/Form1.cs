@@ -1,18 +1,14 @@
 ﻿using ExportSource.Entity;
 using System;
+using System.Configuration;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using LibGit2Sharp;
-using Excel = Microsoft.Office.Interop.Excel;
-using Microsoft.Office.Core;
 
 namespace ExportSource
 {
@@ -36,6 +32,26 @@ namespace ExportSource
 
         #region Search Area
 
+        #region Load Form
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            foreach (string key in ConfigurationManager.AppSettings)
+            {
+                string value = ConfigurationManager.AppSettings[key];
+                chkFileXaml.lstFileExt.Add(value);
+            }
+            //chkFileXaml.lstFileExt.Add(".cs");
+            //chkFileXaml.lstFileExt.Add(".sql");
+            //chkFileXaml.lstFileExt.Add(".xaml");
+
+
+
+            this.checkBox1.Enabled = false;
+            //chkFileXaml.lstFileExt.Add(".xsd");
+        }
+
+        #endregion
+
         #region  Even Button Open Program list click
         /// <summary>
         /// Even Button Open Program list click
@@ -46,8 +62,8 @@ namespace ExportSource
         {
             string fullPathToExcel = string.Empty;
 
-            using (SaveFileDialog dialog = new SaveFileDialog())
-            {
+            using (OpenFileDialog dialog = new OpenFileDialog())            {
+                
                 dialog.Filter = "Exel File | *.xlsx";
                 dialog.DefaultExt = "xlsx";
 
@@ -139,18 +155,15 @@ namespace ExportSource
                     //char key = Convert.ToChar(@"\");
                     List<string> lstFile = new List<string>();
 
-                    string path = @"D:\PhuongDT_Company\Source in Git\Dev#H31-0174-015_SSV";
-                    //string path = this.txtSourcePath.Text;
+                    //string path = @"D:\PhuongDT_Company\Source in Git\Dev#H31-0174-015_SSV";
+                    string path = this.txtSourcePath.Text;
                     int lengtpath = path.Length;
 
                     FileInfoDs fileInfoDs = new FileInfoDs();
 
-
                     // Get file name in program list
                     int rowCnt = 0;
                     int maxRow = 0;
-                    //if ( maxRow > 0 )
-                    //{
 
                     if (this.radChkByPrgList.Checked == true)
                     {
@@ -171,6 +184,7 @@ namespace ExportSource
                         fileInfoDs = this.FindBySource();
                         maxRow = fileInfoDs.FileInfo.Rows.Count - 1;
                     }
+
                     if (fileInfoDs.FileInfo.Rows.Count <= 0)
                     {
                         return;
@@ -209,20 +223,6 @@ namespace ExportSource
             }
         }
         #endregion
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            chkFileXaml.lstFileExt.Add(".cs");
-            chkFileXaml.lstFileExt.Add(".sql");
-            chkFileXaml.lstFileExt.Add(".xaml");
-            this.checkBox1.Enabled = false;
-            //chkFileXaml.lstFileExt.Add(".xsd");
-        }
 
         #endregion
 
@@ -298,7 +298,8 @@ namespace ExportSource
         /// <returns></returns>
         private FileInfoDs FindByProgramList(DataSet excelDataSet, string path)
         {
-            var allfiles = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).Where(f => chkFileXaml.lstFileExt.Contains(new FileInfo(f).Extension, StringComparer.OrdinalIgnoreCase));
+            var allfiles = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
+                                    .Where(f => chkFileXaml.lstFileExt.Contains(new FileInfo(f).Extension, StringComparer.OrdinalIgnoreCase));
 
             FileInfoDs fileInfoDs = new FileInfoDs();
             foreach (DataRow row in excelDataSet.Tables[0].Rows)
@@ -406,11 +407,11 @@ namespace ExportSource
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void settingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            chkFileXaml chkFileXaml = new chkFileXaml();
-            chkFileXaml.ShowDialog();
-        }
+        //private void settingToolStripMenuItem_Click(object sender, EventArgs e)
+        //{
+        //    chkFileXaml chkFileXaml = new chkFileXaml();
+        //    chkFileXaml.ShowDialog();
+        //}
         #endregion
 
         private Boolean ValidationCheck()
@@ -738,6 +739,21 @@ namespace ExportSource
         }
 
         #endregion
+
+        #endregion
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        #region Setting Extention file
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            chkFileXaml chkFileXaml = new chkFileXaml();
+            chkFileXaml.ShowDialog();
+        }
 
         #endregion
     }
