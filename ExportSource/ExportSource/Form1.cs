@@ -1,17 +1,18 @@
 ﻿using ExportSource.Entity;
 using System;
+using System.Configuration;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using LibGit2Sharp;
+<<<<<<< HEAD
 using Excel = Microsoft.Office.Interop.Excel;
+=======
+>>>>>>> 0d1f42fd0dc85dd186ef689071965819d65f7b58
 
 namespace ExportSource
 {
@@ -35,6 +36,23 @@ namespace ExportSource
 
         #region Search Area
 
+        #region Load Form
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            this.ClearErr();
+            this.InitControl();
+
+            foreach (string key in ConfigurationManager.AppSettings)
+            {
+                string value = ConfigurationManager.AppSettings[key];
+                chkFileXaml.lstFileExt.Add(value);
+            } 
+
+            this.checkBox1.Enabled = false;
+        }
+
+        #endregion
+
         #region  Even Button Open Program list click
         /// <summary>
         /// Even Button Open Program list click
@@ -45,8 +63,8 @@ namespace ExportSource
         {
             string fullPathToExcel = string.Empty;
 
-            using (SaveFileDialog dialog = new SaveFileDialog())
-            {
+            using (OpenFileDialog dialog = new OpenFileDialog())            {
+                
                 dialog.Filter = "Exel File | *.xlsx";
                 dialog.DefaultExt = "xlsx";
 
@@ -72,6 +90,7 @@ namespace ExportSource
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             if (files != null && files.Length != 0)
             {
+                this.connectionString = "Provider=Microsoft.ACE.OLEDB.12.0; " + "Data Source='" + files[0] + "';Extended Properties=\"Excel 12.0;HDR=YES;\"";
                 this.txtProgramLstPath.Text = files[0];
             }
         }
@@ -87,28 +106,14 @@ namespace ExportSource
         {
             try
             {
-                //DirectoryInfo d = new DirectoryInfo( @"D:\Source\iwao2020\H31-0211-001_SSV\iWAO\FF3\01_画面\FF3Client\FF3Client" ); 
-                //FileInfo[] Files = d.GetFiles( "*.cs" );
-                //string str = "";
-                //foreach ( FileInfo file in Files )
-                //{
-                //	str = str + ", " + file.Name;
-                //}
-                //string b = str;
                 string path = string.Empty;
                 using (var fbd = new FolderBrowserDialog())
                 {
-                    DialogResult result = fbd.ShowDialog();
-
-                    //if ( result == DialogResult.OK && !string.IsNullOrWhiteSpace( fbd.SelectedPath ) )
-                    //{
-                    //	string[] files = Directory.GetFiles( fbd.SelectedPath );
-                    //}
+                    DialogResult result = fbd.ShowDialog();                    
                     path = fbd.SelectedPath;
                 }
 
                 this.txtSourcePath.Text = path;
-
             }
             catch (Exception ex)
             {
@@ -125,31 +130,22 @@ namespace ExportSource
         private void btnFind_Click(object sender, EventArgs e)
         {
             this.ClearErr();
-            //if (!this.ValidationCheck())
-            //{
-            // return;
-            //} 
 
             try
             {
                 using (OleDbConnection conn = new OleDbConnection(this.connectionString))
                 {
                     // Get file code in source
-                    //char key = Convert.ToChar(@"\");
                     List<string> lstFile = new List<string>();
 
-                    //string path = @"C:\Project\SourceCode\Dev#H31-0174-015_SSV";
                     string path = this.txtSourcePath.Text;
                     int lengtpath = path.Length;
 
                     FileInfoDs fileInfoDs = new FileInfoDs();
 
-
                     // Get file name in program list
                     int rowCnt = 0;
                     int maxRow = 0;
-                    //if ( maxRow > 0 )
-                    //{
 
                     if (this.radChkByPrgList.Checked == true)
                     {
@@ -161,14 +157,16 @@ namespace ExportSource
                         OleDbDataAdapter objDA = new System.Data.OleDb.OleDbDataAdapter(sql, conn);
                         DataSet excelDataSet = new DataSet();
                         objDA.Fill(excelDataSet, "TableColum");
-                        maxRow = excelDataSet.Tables[0].Rows.Count;
                         fileInfoDs = this.FindByProgramList(excelDataSet, path);
+
+                        maxRow = fileInfoDs.Tables[0].Rows.Count;
                     }
                     else if (this.radChkBySource.Checked == true)
                     {
                         fileInfoDs = this.FindBySource();
                         //maxRow = fileInfoDs.FileInfo.Rows.Count - 1;
                     }
+
                     if (fileInfoDs.FileInfo.Rows.Count <= 0)
                     {
                         return;
@@ -207,20 +205,6 @@ namespace ExportSource
             }
         }
         #endregion
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            chkFileXaml.lstFileExt.Add(".cs");
-            chkFileXaml.lstFileExt.Add(".sql");
-            chkFileXaml.lstFileExt.Add(".xaml");
-            this.checkBox1.Enabled = false;
-            //chkFileXaml.lstFileExt.Add(".xsd");
-        }
 
         #endregion
 
@@ -296,18 +280,22 @@ namespace ExportSource
         /// <returns></returns>
         private FileInfoDs FindByProgramList(DataSet excelDataSet, string path)
         {
-            var allfiles = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).Where(f => chkFileXaml.lstFileExt.Contains(new FileInfo(f).Extension, StringComparer.OrdinalIgnoreCase));
+            var allfiles = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
+                                    .Where(f => chkFileXaml.lstFileExt.Contains(new FileInfo(f).Extension, StringComparer.OrdinalIgnoreCase));
 
             FileInfoDs fileInfoDs = new FileInfoDs();
             foreach (DataRow row in excelDataSet.Tables[0].Rows)
             {
-                if (!string.IsNullOrEmpty(row["F6"].ToString()))
+                if(String.IsNullOrEmpty(row["F6"].ToString()))
+                {
+                    continue;
+                }    
+
+                if (row["F6"].ToString() != "File")
                 {
                     FileInfoDs.FileInfoRow fileInfoRow = fileInfoDs.FileInfo.NewFileInfoRow();
-                    //lstFile.Add( fileName.Substring( fileName.LastIndexOf( key ) + 1 ) );
 
                     fileInfoRow.FileUrl = row["F5"].ToString();
-                    //fileInfoRow.FileName = row.Substring( row.LastIndexOf( key ) + 1 );
                     fileInfoRow.FileName = row["F6"].ToString();
                     fileInfoRow.status = row["F8"].ToString();
                     foreach (string fileName in allfiles)
@@ -386,19 +374,6 @@ namespace ExportSource
         }
         #endregion
 
-        #region Setting File Event
-        /// <summary>
-        /// Setting File
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void settingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            chkFileXaml chkFileXaml = new chkFileXaml();
-            chkFileXaml.ShowDialog();
-        }
-        #endregion
-
         private Boolean ValidationCheck()
         {
             Boolean isCheck = true;
@@ -429,6 +404,11 @@ namespace ExportSource
         {
             this.txtProgramLstPath.BackColor = Color.White;
             this.txtSourcePath.BackColor = Color.White;
+        }
+        private void InitControl()
+        {
+            this.chkboxSelectOutPut.Checked = false;
+            this.dtGrvProgramList.Rows.Clear();
         }
 
         #region PhuongDT
@@ -725,5 +705,28 @@ namespace ExportSource
         #endregion
 
         #endregion
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        #region Setting Extention file
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            chkFileXaml chkFileXaml = new chkFileXaml();
+            chkFileXaml.ShowDialog();
+        }
+
+        #endregion
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            this.ClearErr();
+            this.InitControl();
+            this.txtProgramLstPath.Text = string.Empty;
+            this.txtSourcePath.Text = string.Empty;
+        }
     }
 }
