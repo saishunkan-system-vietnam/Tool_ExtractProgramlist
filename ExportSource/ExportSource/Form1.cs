@@ -35,19 +35,16 @@ namespace ExportSource
         #region Load Form
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.ClearErr();
+            this.InitControl();
+
             foreach (string key in ConfigurationManager.AppSettings)
             {
                 string value = ConfigurationManager.AppSettings[key];
                 chkFileXaml.lstFileExt.Add(value);
-            }
-            //chkFileXaml.lstFileExt.Add(".cs");
-            //chkFileXaml.lstFileExt.Add(".sql");
-            //chkFileXaml.lstFileExt.Add(".xaml");
-
-
+            } 
 
             this.checkBox1.Enabled = false;
-            //chkFileXaml.lstFileExt.Add(".xsd");
         }
 
         #endregion
@@ -89,6 +86,7 @@ namespace ExportSource
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             if (files != null && files.Length != 0)
             {
+                this.connectionString = "Provider=Microsoft.ACE.OLEDB.12.0; " + "Data Source='" + files[0] + "';Extended Properties=\"Excel 12.0;HDR=YES;\"";
                 this.txtProgramLstPath.Text = files[0];
             }
         }
@@ -104,28 +102,14 @@ namespace ExportSource
         {
             try
             {
-                //DirectoryInfo d = new DirectoryInfo( @"D:\Source\iwao2020\H31-0211-001_SSV\iWAO\FF3\01_画面\FF3Client\FF3Client" ); 
-                //FileInfo[] Files = d.GetFiles( "*.cs" );
-                //string str = "";
-                //foreach ( FileInfo file in Files )
-                //{
-                //	str = str + ", " + file.Name;
-                //}
-                //string b = str;
                 string path = string.Empty;
                 using (var fbd = new FolderBrowserDialog())
                 {
-                    DialogResult result = fbd.ShowDialog();
-
-                    //if ( result == DialogResult.OK && !string.IsNullOrWhiteSpace( fbd.SelectedPath ) )
-                    //{
-                    //	string[] files = Directory.GetFiles( fbd.SelectedPath );
-                    //}
+                    DialogResult result = fbd.ShowDialog();                    
                     path = fbd.SelectedPath;
                 }
 
                 this.txtSourcePath.Text = path;
-
             }
             catch (Exception ex)
             {
@@ -142,20 +126,14 @@ namespace ExportSource
         private void btnFind_Click(object sender, EventArgs e)
         {
             this.ClearErr();
-            //if (!this.ValidationCheck())
-            //{
-            // return;
-            //} 
 
             try
             {
                 using (OleDbConnection conn = new OleDbConnection(this.connectionString))
                 {
                     // Get file code in source
-                    //char key = Convert.ToChar(@"\");
                     List<string> lstFile = new List<string>();
 
-                    //string path = @"D:\PhuongDT_Company\Source in Git\Dev#H31-0174-015_SSV";
                     string path = this.txtSourcePath.Text;
                     int lengtpath = path.Length;
 
@@ -312,10 +290,8 @@ namespace ExportSource
                 if (row["F6"].ToString() != "File")
                 {
                     FileInfoDs.FileInfoRow fileInfoRow = fileInfoDs.FileInfo.NewFileInfoRow();
-                    //lstFile.Add( fileName.Substring( fileName.LastIndexOf( key ) + 1 ) );
 
                     fileInfoRow.FileUrl = row["F5"].ToString();
-                    //fileInfoRow.FileName = row.Substring( row.LastIndexOf( key ) + 1 );
                     fileInfoRow.FileName = row["F6"].ToString();
                     fileInfoRow.status = row["F8"].ToString();
                     foreach (string fileName in allfiles)
@@ -401,19 +377,6 @@ namespace ExportSource
         }
         #endregion
 
-        #region Setting File Event
-        /// <summary>
-        /// Setting File
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void settingToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    chkFileXaml chkFileXaml = new chkFileXaml();
-        //    chkFileXaml.ShowDialog();
-        //}
-        #endregion
-
         private Boolean ValidationCheck()
         {
             Boolean isCheck = true;
@@ -444,6 +407,11 @@ namespace ExportSource
         {
             this.txtProgramLstPath.BackColor = Color.White;
             this.txtSourcePath.BackColor = Color.White;
+        }
+        private void InitControl()
+        {
+            this.chkboxSelectOutPut.Checked = false;
+            this.dtGrvProgramList.Rows.Clear();
         }
 
         #region PhuongDT
@@ -756,5 +724,13 @@ namespace ExportSource
         }
 
         #endregion
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            this.ClearErr();
+            this.InitControl();
+            this.txtProgramLstPath.Text = string.Empty;
+            this.txtSourcePath.Text = string.Empty;
+        }
     }
 }

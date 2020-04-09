@@ -66,6 +66,7 @@ namespace ExportSource
             var map = new ExeConfigurationFileMap { ExeConfigFilename = filePath };
             Configuration config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
             bool isAddFlg = true;
+            bool isDelFlg = false;
 
             foreach (Control ctrl in this.Controls)
             {
@@ -104,6 +105,25 @@ namespace ExportSource
                         MessageBox.Show(ex.Message);
                     }
                 }
+                else if(chk != null && chk.Checked == false)
+                {
+                    isDelFlg = false;
+                    foreach (String key in lstFileExt)
+                    {
+                        if (key == chk.Text)
+                        {
+                            isDelFlg = true;
+                            break;
+                        }
+                    }
+
+                    if (isDelFlg == true)
+                    {
+                        // Add an Application Setting if not exist
+                        config.AppSettings.Settings.Remove((chk.Text.Replace(".", "")));
+                        lstFileExt.Remove(chk.Text);
+                    }
+                }    
             }
 
             // Save the changes in App.config file.
@@ -112,6 +132,5 @@ namespace ExportSource
             // Force a reload of a changed section.
             ConfigurationManager.RefreshSection("appSettings");
         }
-        
     }
 }

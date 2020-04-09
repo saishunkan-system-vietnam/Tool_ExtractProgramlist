@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.grbSearchInf = new System.Windows.Forms.GroupBox();
             this.dtpkSinceCommitSource = new System.Windows.Forms.DateTimePicker();
             this.radChkBySource = new System.Windows.Forms.RadioButton();
@@ -224,8 +224,8 @@
             // 
             // No
             // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.No.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.No.DefaultCellStyle = dataGridViewCellStyle1;
             this.No.HeaderText = "No";
             this.No.Name = "No";
             this.No.Resizable = System.Windows.Forms.DataGridViewTriState.False;
@@ -327,6 +327,7 @@
             this.button3.TabIndex = 2;
             this.button3.Text = "Clear";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // checkBox1
             // 
