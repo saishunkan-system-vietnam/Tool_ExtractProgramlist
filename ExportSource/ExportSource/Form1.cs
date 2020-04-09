@@ -9,10 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using LibGit2Sharp;
-<<<<<<< HEAD
 using Excel = Microsoft.Office.Interop.Excel;
-=======
->>>>>>> 0d1f42fd0dc85dd186ef689071965819d65f7b58
 
 namespace ExportSource
 {
@@ -202,6 +199,7 @@ namespace ExportSource
             }
             catch (Exception ex)
             {
+                throw ex;
             }
         }
         #endregion
@@ -330,6 +328,45 @@ namespace ExportSource
             string repoDir = this.txtSourcePath.Text;
             using (var repo = new Repository(repoDir))
             {
+                #region Get Files Un Commit
+
+                foreach (var item in repo.RetrieveStatus())
+                {
+                    if (chkFileXaml.lstFileExt.Contains(Path.GetExtension(item.FilePath).Trim()))
+                    {
+                        if (item.State == FileStatus.NewInWorkdir ||
+                            item.State == FileStatus.ModifiedInWorkdir ||
+                            item.State == FileStatus.NewInIndex ||
+                            item.State == FileStatus.ModifiedInIndex)
+                        {
+                            string strpath = item.FilePath.ToString();
+                            string strUrl = strpath.Contains(key) ? @"\" + strpath.Substring(0, strpath.LastIndexOf(key)).Replace(@"/", @"\") : @"\";
+                            string strFileName = strpath.Contains(key) ? strpath.Substring(strpath.LastIndexOf(key) + 1) : strpath;
+
+                            string status = string.Empty;
+                            if (item.State == FileStatus.NewInWorkdir || item.State == FileStatus.NewInIndex)
+                                status = "Add";
+                            else if (item.State == FileStatus.ModifiedInWorkdir || item.State == FileStatus.ModifiedInIndex)
+                                status = "Update";
+
+                            //var patch = repo.Diff.Compare<Patch>(new List<string>() { item.FilePath });
+                            //fileStatusInfos.Add(new FileStatusInfo { FileName = Path.GetFileName(item.FilePath), Status = status });
+                            FileInfoDs.FileInfoRow unCommitRow = fileInfoDs.FileInfo.NewFileInfoRow();
+
+                            unCommitRow.FileUrl = strUrl;
+                            unCommitRow.FileName = strFileName;
+                            unCommitRow.status = status;
+                            unCommitRow.checkexist = "No Commit";
+                            fileInfoDs.FileInfo.AddFileInfoRow(unCommitRow);
+                            unCommitRow.AcceptChanges();
+                        }
+                    }
+                }
+
+                #endregion
+
+                #region Get Files Commit
+
                 foreach (Commit commit in repo.Commits.Where(x => x.Committer.When >= dtpkSinceCommitSource.Value.Date).OrderBy(x => x.Committer.When))
                 {
                     foreach (var parent in commit.Parents)
@@ -337,28 +374,22 @@ namespace ExportSource
                         foreach (TreeEntryChanges change in repo.Diff.Compare<TreeChanges>(parent.Tree, commit.Tree))
                         {
                             FileInfoDs.FileInfoRow fileInfoRow = fileInfoDs.FileInfo.NewFileInfoRow();
+
                             string strpath = change.Path.ToString();
-                            string strUrl = @"\" + strpath.Substring(0, strpath.LastIndexOf(key)).Replace(@"/", @"\");
-                            string strFileName = strpath.Substring(strpath.LastIndexOf(key) + 1);
+                            string strUrl = strpath.Contains(key) ? @"\" + strpath.Substring(0, strpath.LastIndexOf(key)).Replace(@"/", @"\") : @"\";
+                            string strFileName = strpath.Contains(key) ? strpath.Substring(strpath.LastIndexOf(key) + 1) : strpath;
                             string status = string.Empty;
-                            if (change.Status.ToString() == "Modified")
-                            {
-                                status = "Update";
-                            }
-                            else
-                            {
-                                status = "Add";
-                            }
+                            status = change.Status.ToString() == "Modified" ? "Update" : "Add";
 
-                            FileInfoDs.FileInfoRow rowFilter = fileInfoDs.FileInfo.Where(x=> x.FileUrl == strUrl && x.FileName == strFileName).FirstOrDefault();
-
-                            if(rowFilter == null)
+                            if (chkFileXaml.lstFileExt.Contains(Path.GetExtension(strpath).Trim()))
                             {
-                                fileInfoRow.FileUrl = strUrl;
-                                fileInfoRow.FileName = strFileName;
+                                FileInfoDs.FileInfoRow rowFilter = fileInfoDs.FileInfo.Where(x => x.FileUrl == strUrl
+                                                                                             && x.FileName == strFileName).FirstOrDefault();
 
-                                if (chkFileXaml.lstFileExt.Contains(Path.GetExtension(strpath).Trim()))
+                                if (rowFilter == null)
                                 {
+                                    fileInfoRow.FileUrl = strUrl;
+                                    fileInfoRow.FileName = strFileName;
                                     fileInfoRow.status = status;
                                     fileInfoRow.CreateDate = commit.Committer.When.ToString("dd-MM-yyyy");
                                     fileInfoDs.FileInfo.AddFileInfoRow(fileInfoRow);
@@ -368,6 +399,8 @@ namespace ExportSource
                         }
                     }
                 }
+
+                #endregion
 
                 return fileInfoDs;
             }
