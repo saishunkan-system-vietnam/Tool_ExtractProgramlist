@@ -3,13 +3,12 @@ using System;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.OleDb;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using LibGit2Sharp;
-using Excel = Microsoft.Office.Interop.Excel;
+using ExcelApp = Microsoft.Office.Interop.Excel;
 
 namespace ExportSource
 {
@@ -133,63 +132,51 @@ namespace ExportSource
             this.ClearErr();
             try
             {
-                using (OleDbConnection conn = new OleDbConnection(this.connectionString))
+                // Get file code in source
+                List<string> lstFile = new List<string>();
+
+                string path = this.txtSourcePath.Text;
+                int lengtpath = path.Length;
+
+                FileInfoDs fileInfoDs = new FileInfoDs();
+
+                // Get file name in program list
+                int rowCnt = 0;
+
+                if (this.radChkByPrgList.Checked == true)
                 {
-                    // Get file code in source
-                    List<string> lstFile = new List<string>();
-
-                    string path = this.txtSourcePath.Text;
-                    int lengtpath = path.Length;
-
-                    FileInfoDs fileInfoDs = new FileInfoDs();
-
-                    // Get file name in program list
-                    int rowCnt = 0;
-                    int maxRow = 0;
-
-                    if (this.radChkByPrgList.Checked == true)
-                    {
-                        this.dtGrvProgramList.Rows.Clear();
-                        string database = "[プログラム一覧$]";
-                        conn.Open();
-                        string sql = "select * from " + database;
-
-                        OleDbDataAdapter objDA = new System.Data.OleDb.OleDbDataAdapter(sql, conn);
-                        DataSet excelDataSet = new DataSet();
-                        objDA.Fill(excelDataSet, "TableColum");
-                        fileInfoDs = this.FindByProgramList(excelDataSet, path);
-
-                        maxRow = fileInfoDs.Tables[0].Rows.Count;
-                    }
-                    else if (this.radChkBySource.Checked == true)
-                    {
-                        fileInfoDs = this.FindBySource();
-                    }
-
-                    if (fileInfoDs.FileInfo.Rows.Count <= 0)
-                    {
-                        return;
-                    }
                     this.dtGrvProgramList.Rows.Clear();
-                    this.dtGrvProgramList.Rows.Add(fileInfoDs.FileInfo.Rows.Count);
+                    String test = txtProgramLstPath.Text;
 
-                    foreach (FileInfoDs.FileInfoRow rows in fileInfoDs.FileInfo.Rows)
+                    fileInfoDs = this.ReadDataFileExcel(test);
+                }
+                else if (this.radChkBySource.Checked == true)
+                {
+                    fileInfoDs = this.FindBySource();
+                }
+
+                if (fileInfoDs.FileInfo.Rows.Count <= 0)
+                {
+                    return;
+                }
+                this.dtGrvProgramList.Rows.Clear();
+                this.dtGrvProgramList.Rows.Add(fileInfoDs.FileInfo.Rows.Count);
+
+                foreach (FileInfoDs.FileInfoRow rows in fileInfoDs.FileInfo.Rows)
+                {
+                    this.dtGrvProgramList[0, rowCnt].Value = rowCnt + 1;
+                    this.dtGrvProgramList[1, rowCnt].Value = string.Empty;
+                    this.dtGrvProgramList[2, rowCnt].Value = string.Empty;
+                    this.dtGrvProgramList[3, rowCnt].Value = rows.FileUrl;
+                    this.dtGrvProgramList[4, rowCnt].Value = rows.FileName;
+                    this.dtGrvProgramList[5, rowCnt].Value = rows.status;
+                    this.dtGrvProgramList[6, rowCnt].Value = rows.checkexist;
+                    if (rows.checkexist == "not exist" || rows.checkexist == "no commit")
                     {
-                        this.dtGrvProgramList[0, rowCnt].Value = rowCnt + 1;
-                        this.dtGrvProgramList[1, rowCnt].Value = string.Empty;
-                        this.dtGrvProgramList[2, rowCnt].Value = string.Empty;
-                        this.dtGrvProgramList[3, rowCnt].Value = rows.FileUrl;
-                        this.dtGrvProgramList[4, rowCnt].Value = rows.FileName;
-                        this.dtGrvProgramList[5, rowCnt].Value = rows.status;
-                        this.dtGrvProgramList[6, rowCnt].Value = rows.checkexist;
-                        if (rows.checkexist == "not exist")
-                        {
-                            this.dtGrvProgramList.Rows[rowCnt].DefaultCellStyle.BackColor = Color.Red;
-                        }
-                        this.dtGrvProgramList[8, rowCnt].Value = rows.CreateDate;
-                        this.dtGrvProgramList[9, rowCnt].Value = rows.LastModificationDate;
-                        rowCnt++;
+
+                        this.dtGrvProgramList.Rows[rowCnt].DefaultCellStyle.BackColor = Color.Red;
                     }
+                    rowCnt++;
                 }
             }
             catch (Exception ex)
@@ -263,50 +250,53 @@ namespace ExportSource
         #endregion
 
         #region Find By Proram List
-        /// <summary>
-        /// Find By Proram List
-        /// </summary>
-        /// <param name="excelDataSet"></param>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private FileInfoDs FindByProgramList(DataSet excelDataSet, string folderPath)
+
+        private FileInfoDs ReadDataFileExcel(string path)
         {
+            ExcelApp.Application excelApp = new ExcelApp.Application();
             FileInfoDs fileInfoDs = new FileInfoDs();
-            foreach (DataRow row in excelDataSet.Tables[0].Rows)
+            try
             {
-                if (String.IsNullOrEmpty(row["F6"].ToString()))
+                ExcelApp.Workbook excelBook = excelApp.Workbooks.Open(path);
+                ExcelApp._Worksheet excelSheet = excelBook.Sheets[1];
+                ExcelApp.Range excelRange = excelSheet.UsedRange;
+
+                int rows = excelRange.Rows.Count;
+
+                for (int i = 4; i < rows; i++)
                 {
-                    continue;
-                }
+                    FileInfoDs.FileInfoRow row = fileInfoDs.FileInfo.NewFileInfoRow();
+                    row.FileUrl = excelRange.Cells[i, 5].Value2.ToString();
+                    row.FileName = excelRange.Cells[i, 6].Value2.ToString();
+                    row.status = excelRange.Cells[i, 8].Value2.ToString();
 
-                if (row["F6"].ToString() != "File")
-                {
-                    FileInfoDs.FileInfoRow fileInfoRow = fileInfoDs.FileInfo.NewFileInfoRow();
-
-                    fileInfoRow.FileUrl = row["F5"].ToString();
-                    fileInfoRow.FileName = row["F6"].ToString();
-                    fileInfoRow.status = row["F8"].ToString();
-
-                    string pathFileName = Path.Combine(fileInfoRow.FileUrl, fileInfoRow.FileName);
-                    string fullPath = folderPath + pathFileName;
+                    string fullPath = Path.Combine(txtSourcePath.Text, row.FileUrl, row.FileName);
 
                     if (File.Exists(fullPath))
                     {
-                        fileInfoRow.checkexist = "exist";
-                        fileInfoRow.CreateDate = File.GetCreationTime(fullPath).ToString();
-                        fileInfoRow.LastModificationDate = File.GetLastWriteTime(fullPath).ToString();
+                        row.checkexist = "exist";
                     }
                     else
                     {
-                        fileInfoRow.checkexist = "not exist";
+                        row.checkexist = "not exist";
                     }
 
-                    fileInfoDs.FileInfo.AddFileInfoRow(fileInfoRow);
-                    fileInfoRow.AcceptChanges();
+                    fileInfoDs.FileInfo.AddFileInfoRow(row);
                 }
+
+                excelApp.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+
+            }
+            catch (Exception)
+            {
+                excelApp.Quit();
+                MessageBox.Show("Kiểm tra lại file data");
+                return null;
             }
             return fileInfoDs;
         }
+
         #endregion
 
         #region Find By PathSource
@@ -349,7 +339,7 @@ namespace ExportSource
                             unCommitRow.FileUrl = strUrl;
                             unCommitRow.FileName = strFileName;
                             unCommitRow.status = status;
-                            unCommitRow.checkexist = "No Commit";
+                            unCommitRow.checkexist = "no commit";
                             fileInfoDs.FileInfo.AddFileInfoRow(unCommitRow);
                             unCommitRow.AcceptChanges();
                         }
