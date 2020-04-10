@@ -18,13 +18,6 @@ namespace ExportSource
 
         private string connectionString = string.Empty;
         private char key = Convert.ToChar(@"/");
-        private int modeSearch = 0;
-
-        enum ModeSearch
-        {
-            SearchByPrgLst,
-            SearchBySource
-        }
 
         public Form1()
         {
@@ -68,7 +61,7 @@ namespace ExportSource
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     fullPathToExcel = dialog.FileName;
-                    this.connectionString = "Provider=Microsoft.ACE.OLEDB.12.0; " + "Data Source='" + fullPathToExcel + "';Extended Properties=\"Excel 12.0;HDR=YES;\"";
+                    this.connectionString = this.GetConneectionString(fullPathToExcel);
 
                     this.txtProgramLstPath.Text = fullPathToExcel;
                 }
@@ -87,11 +80,22 @@ namespace ExportSource
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             if (files != null && files.Length != 0)
             {
-                this.connectionString = "Provider=Microsoft.ACE.OLEDB.12.0; " + "Data Source='" + files[0] + "';Extended Properties=\"Excel 12.0;HDR=YES;\"";
+                this.connectionString = this.GetConneectionString(files[0]);
                 this.txtProgramLstPath.Text = files[0];
             }
         }
         #endregion
+
+        private string GetConneectionString(string filePath)
+        {
+            string connectionString = string.Empty;
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0; Data Source={0};Extended Properties=\"Excel 12.0;HDR=YES;\"", filePath);
+            }
+
+            return connectionString;
+        }
 
         #region Even Button Open Source Path click
         /// <summary>
@@ -127,7 +131,6 @@ namespace ExportSource
         private void btnFind_Click(object sender, EventArgs e)
         {
             this.ClearErr();
-
             try
             {
                 using (OleDbConnection conn = new OleDbConnection(this.connectionString))
@@ -161,7 +164,6 @@ namespace ExportSource
                     else if (this.radChkBySource.Checked == true)
                     {
                         fileInfoDs = this.FindBySource();
-                        //maxRow = fileInfoDs.FileInfo.Rows.Count - 1;
                     }
 
                     if (fileInfoDs.FileInfo.Rows.Count <= 0)
@@ -179,17 +181,10 @@ namespace ExportSource
                         this.dtGrvProgramList[3, rowCnt].Value = rows.FileUrl;
                         this.dtGrvProgramList[4, rowCnt].Value = rows.FileName;
                         this.dtGrvProgramList[5, rowCnt].Value = rows.status;
-                        if (this.modeSearch == (int)ModeSearch.SearchByPrgLst)
+                        this.dtGrvProgramList[6, rowCnt].Value = rows.checkexist;
+                        if (rows.checkexist == "not exist")
                         {
-                            if (rows.checkexist == "exist")
-                            {
-                                this.dtGrvProgramList[6, rowCnt].Value = rows.checkexist;
-                            }
-                            else
-                            {
-                                this.dtGrvProgramList[6, rowCnt].Value = "not exist";
-                                this.dtGrvProgramList.Rows[rowCnt].DefaultCellStyle.BackColor = Color.Red;
-                            }
+                            this.dtGrvProgramList.Rows[rowCnt].DefaultCellStyle.BackColor = Color.Red;
                         }
                         this.dtGrvProgramList[8, rowCnt].Value = rows.CreateDate;
                         this.dtGrvProgramList[9, rowCnt].Value = rows.LastModificationDate;
@@ -242,7 +237,6 @@ namespace ExportSource
         {
             if (this.radChkByPrgList.Checked == true)
             {
-                this.modeSearch = (int)ModeSearch.SearchByPrgLst;
                 this.btnOpenProgramLstPath.Enabled = true;
                 this.txtProgramLstPath.Enabled = true;
                 this.dtpkSinceCommitSource.Enabled = false;
@@ -260,7 +254,6 @@ namespace ExportSource
         {
             if (this.radChkBySource.Checked == true)
             {
-                this.modeSearch = (int)ModeSearch.SearchBySource;
                 this.btnOpenProgramLstPath.Enabled = false;
                 this.txtProgramLstPath.Enabled = false;
                 this.txtProgramLstPath.Clear();
@@ -276,18 +269,15 @@ namespace ExportSource
         /// <param name="excelDataSet"></param>
         /// <param name="path"></param>
         /// <returns></returns>
-        private FileInfoDs FindByProgramList(DataSet excelDataSet, string path)
+        private FileInfoDs FindByProgramList(DataSet excelDataSet, string folderPath)
         {
-            var allfiles = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
-                                    .Where(f => chkFileXaml.lstFileExt.Contains(new FileInfo(f).Extension, StringComparer.OrdinalIgnoreCase));
-
             FileInfoDs fileInfoDs = new FileInfoDs();
             foreach (DataRow row in excelDataSet.Tables[0].Rows)
             {
-                if(String.IsNullOrEmpty(row["F6"].ToString()))
+                if (String.IsNullOrEmpty(row["F6"].ToString()))
                 {
                     continue;
-                }    
+                }
 
                 if (row["F6"].ToString() != "File")
                 {
@@ -296,18 +286,21 @@ namespace ExportSource
                     fileInfoRow.FileUrl = row["F5"].ToString();
                     fileInfoRow.FileName = row["F6"].ToString();
                     fileInfoRow.status = row["F8"].ToString();
-                    foreach (string fileName in allfiles)
-                    {
-                        string filename = fileName.Substring(fileName.LastIndexOf(@"\") + 1);
 
-                        if (filename == row["F6"].ToString())
-                        {
-                            fileInfoRow.checkexist = "exist";
-                            fileInfoRow.CreateDate = File.GetCreationTime(fileName).ToString();
-                            fileInfoRow.LastModificationDate = File.GetLastWriteTime(fileName).ToString();
-                            break;
-                        }
+                    string pathFileName = Path.Combine(fileInfoRow.FileUrl, fileInfoRow.FileName);
+                    string fullPath = folderPath + pathFileName;
+
+                    if (File.Exists(fullPath))
+                    {
+                        fileInfoRow.checkexist = "exist";
+                        fileInfoRow.CreateDate = File.GetCreationTime(fullPath).ToString();
+                        fileInfoRow.LastModificationDate = File.GetLastWriteTime(fullPath).ToString();
                     }
+                    else
+                    {
+                        fileInfoRow.checkexist = "not exist";
+                    }
+
                     fileInfoDs.FileInfo.AddFileInfoRow(fileInfoRow);
                     fileInfoRow.AcceptChanges();
                 }
