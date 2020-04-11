@@ -17,6 +17,7 @@ namespace ExportSource
 
         private string connectionString = string.Empty;
         private char key = Convert.ToChar(@"/");
+        private string fullPath = Path.GetFullPath("InputFileExtension.txt").Replace("\\bin\\Debug", "\\FileText");
 
         public Form1()
         {
@@ -30,12 +31,6 @@ namespace ExportSource
         {
             this.ClearErr();
             this.InitControl();
-
-            foreach (string key in ConfigurationManager.AppSettings)
-            {
-                string value = ConfigurationManager.AppSettings[key];
-                chkFileXaml.lstFileExt.Add(value);
-            } 
 
             this.checkBox1.Enabled = false;
         }
@@ -52,49 +47,18 @@ namespace ExportSource
         {
             string fullPathToExcel = string.Empty;
 
-            using (OpenFileDialog dialog = new OpenFileDialog())            {
+            using (OpenFileDialog dialog = new OpenFileDialog()){
                 
                 dialog.Filter = "Exel File | *.xlsx";
                 dialog.DefaultExt = "xlsx";
 
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    fullPathToExcel = dialog.FileName;
-                    this.connectionString = this.GetConneectionString(fullPathToExcel);
-
-                    this.txtProgramLstPath.Text = fullPathToExcel;
+                    this.txtProgramLstPath.Text = dialog.FileName;
                 }
             }
         }
         #endregion
-
-        #region  Even Drag program list
-        /// <summary>
-        /// Even Drag program list
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void txtProgramLstPath_DragOver(object sender, DragEventArgs e)
-        {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            if (files != null && files.Length != 0)
-            {
-                this.connectionString = this.GetConneectionString(files[0]);
-                this.txtProgramLstPath.Text = files[0];
-            }
-        }
-        #endregion
-
-        private string GetConneectionString(string filePath)
-        {
-            string connectionString = string.Empty;
-            if (!string.IsNullOrEmpty(filePath))
-            {
-                connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0; Data Source={0};Extended Properties=\"Excel 12.0;HDR=YES;\"", filePath);
-            }
-
-            return connectionString;
-        }
 
         #region Even Button Open Source Path click
         /// <summary>
@@ -109,7 +73,7 @@ namespace ExportSource
                 string path = string.Empty;
                 using (var fbd = new FolderBrowserDialog())
                 {
-                    DialogResult result = fbd.ShowDialog();                    
+                    DialogResult result = fbd.ShowDialog();
                     path = fbd.SelectedPath;
                 }
 
@@ -182,6 +146,22 @@ namespace ExportSource
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+        #endregion
+
+        #region  Even Drag program list
+        /// <summary>
+        /// Even Drag program list
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txtProgramLstPath_DragOver(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files != null && files.Length != 0)
+            {
+                this.txtProgramLstPath.Text = files[0];
             }
         }
         #endregion
@@ -306,16 +286,18 @@ namespace ExportSource
         /// <returns></returns>
         private FileInfoDs FindBySource()
         {
-
             FileInfoDs fileInfoDs = new FileInfoDs();
             string repoDir = this.txtSourcePath.Text;
+
+            List<string> lstFileKey = new List<string>(File.ReadAllLines(fullPath));
+
             using (var repo = new Repository(repoDir))
             {
                 #region Get Files Un Commit
 
                 foreach (var item in repo.RetrieveStatus())
                 {
-                    if (chkFileXaml.lstFileExt.Contains(Path.GetExtension(item.FilePath).Trim()))
+                    if (lstFileKey.Contains(Path.GetExtension(item.FilePath).Trim()))
                     {
                         if (item.State == FileStatus.NewInWorkdir ||
                             item.State == FileStatus.ModifiedInWorkdir ||
@@ -332,8 +314,6 @@ namespace ExportSource
                             else if (item.State == FileStatus.ModifiedInWorkdir || item.State == FileStatus.ModifiedInIndex)
                                 status = "Update";
 
-                            //var patch = repo.Diff.Compare<Patch>(new List<string>() { item.FilePath });
-                            //fileStatusInfos.Add(new FileStatusInfo { FileName = Path.GetFileName(item.FilePath), Status = status });
                             FileInfoDs.FileInfoRow unCommitRow = fileInfoDs.FileInfo.NewFileInfoRow();
 
                             unCommitRow.FileUrl = strUrl;
@@ -364,7 +344,7 @@ namespace ExportSource
                             string status = string.Empty;
                             status = change.Status.ToString() == "Modified" ? "Update" : "Add";
 
-                            if (chkFileXaml.lstFileExt.Contains(Path.GetExtension(strpath).Trim()))
+                            if (lstFileKey.Contains(Path.GetExtension(strpath).Trim()))
                             {
                                 FileInfoDs.FileInfoRow rowFilter = fileInfoDs.FileInfo.Where(x => x.FileUrl == strUrl
                                                                                              && x.FileName == strFileName).FirstOrDefault();
@@ -731,8 +711,8 @@ namespace ExportSource
 
         private void button1_Click(object sender, EventArgs e)
         {
-            chkFileXaml chkFileXaml = new chkFileXaml();
-            chkFileXaml.ShowDialog();
+            SettingFileFrm settingFileFrm = new SettingFileFrm();
+            settingFileFrm.Show();
         }
 
         #endregion
