@@ -1,6 +1,5 @@
 ﻿using ExportSource.Entity;
 using System;
-using System.Configuration;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -12,22 +11,28 @@ using ExcelApp = Microsoft.Office.Interop.Excel;
 
 namespace ExportSource
 {
-    public partial class Form1 : Form
+    public partial class MainFrm : Form
     {
         private char forwardSlashChar = '/';
 
         struct ApConst
         {
-            public static string NotExistStatus = "Not Exist";
+			#region Status File
+			public static string NotExistStatus = "Not Exist";
             public static string ExistStatus = "Exist";
-            public static string AddStatus = "Add";
-            public static string UpdateStatus = "Update";
             public static string NotcommitStatus = "Not commit";
-        }
+			#endregion
 
-        private string extSettingPath = Path.GetFullPath("InputFileExtension.txt").Replace("\\bin\\Debug", "\\FileText");
+			#region Species File
+			public static string AddStatus = "Add";
+            public static string UpdateStatus = "Update";
+            public static string DeleteStatus = "Delete";
+			#endregion
+		}
 
-        public Form1()
+		private string extSettingPath = Path.GetFullPath("InputFileExtension.txt").Replace("\\bin\\Debug", "\\FileText");
+
+        public MainFrm()
         {
             InitializeComponent();
         }
@@ -35,12 +40,14 @@ namespace ExportSource
         #region Search Area
 
         #region Load Form
+
         private void Form1_Load(object sender, EventArgs e)
         {
             this.ClearErr();
             this.InitControl();
 
-            this.chkIsExportProgramList.Enabled = false;
+            this.MaximizeBox = false;
+            this.btnExport.Enabled = false;
         }
 
         #endregion
@@ -66,7 +73,6 @@ namespace ExportSource
             }
         }
         #endregion
-
 
         #region Even Button Open Source Path click
         /// <summary>
@@ -130,17 +136,11 @@ namespace ExportSource
                 {
                     return;
                 }
-                this.dtGrvProgramList.Rows.Add(fileInfoDs.FileInfo.Rows.Count);
 
                 foreach (FileInfoDs.FileInfoRow rows in fileInfoDs.FileInfo.Rows)
                 {
-                    this.dtGrvProgramList[0, rowCnt].Value = rowCnt + 1;
-                    this.dtGrvProgramList[1, rowCnt].Value = string.Empty;
-                    this.dtGrvProgramList[2, rowCnt].Value = string.Empty;
-                    this.dtGrvProgramList[3, rowCnt].Value = rows.FileUrl;
-                    this.dtGrvProgramList[4, rowCnt].Value = rows.FileName;
-                    this.dtGrvProgramList[5, rowCnt].Value = rows.status;
-                    this.dtGrvProgramList[6, rowCnt].Value = rows.checkexist;
+                    // Add data in new Row
+                    dtGrvProgramList.Rows.Add(rowCnt + 1, rows.FileUrl, rows.FileName, rows.status, rows.checkexist);
                     if (rows.checkexist == ApConst.NotExistStatus)
                     {
                         this.dtGrvProgramList.Rows[rowCnt].DefaultCellStyle.BackColor = Color.Red;
@@ -188,16 +188,14 @@ namespace ExportSource
 
             foreach (DataGridViewRow row in dtGrvProgramList.Rows)
             {
-                if (this.chkboxSelectOutPut.Checked == true)
+                if (this.chkboxSelectOutPut.Checked == true && this.dtGrvProgramList[4, row.Index].Value.ToString() == "Exist")
                 {
-                    this.dtGrvProgramList[7, row.Index].Value = true;
-                    this.chkIsExportProgramList.Enabled = true;
+                    this.dtGrvProgramList[6, row.Index].Value = true;
 
                 }
                 else
                 {
-                    this.dtGrvProgramList[7, row.Index].Value = false;
-                    this.chkIsExportProgramList.Enabled = false;
+                    this.dtGrvProgramList[6, row.Index].Value = false;
                 }
             }
         }
@@ -314,13 +312,13 @@ namespace ExportSource
                             string gitFolderPath = item.FilePath.ToString();
                             string displayFolderPath = gitFolderPath.Contains(forwardSlashChar) ? @"\" +
                                                     gitFolderPath.Substring(0, gitFolderPath.LastIndexOf(forwardSlashChar)).Replace(@"/", @"\") : @"\";
-                            if (displayFolderPath.Contains(@"\bin\") || displayFolderPath.Contains(@"\obj\"))
+                            if (CheckExistFileName(displayFolderPath))
                             {
                                 continue;
                             }
 
                             string strFileName = gitFolderPath.Contains(forwardSlashChar) ? gitFolderPath.Substring(gitFolderPath.LastIndexOf(forwardSlashChar) + 1) : gitFolderPath;
-                            if (strFileName.Contains(@"~$"))
+                            if (CheckExistFileName(strFileName))
                             {
                                 continue;
                             }
@@ -347,8 +345,12 @@ namespace ExportSource
 
                 #region Get Files Commit
 
+                var test = repo.Commits.Where(x => x.Committer.When >= DateTimeGetChangeControl.Value.Date).OrderBy(x => x.Committer.When);
+
                 foreach (Commit commit in repo.Commits.Where(x => x.Committer.When >= DateTimeGetChangeControl.Value.Date).OrderBy(x => x.Committer.When))
                 {
+                    string commiter = commit.Committer.Name;
+
                     foreach (var parent in commit.Parents)
                     {
                         foreach (TreeEntryChanges change in repo.Diff.Compare<TreeChanges>(parent.Tree, commit.Tree))
@@ -356,12 +358,26 @@ namespace ExportSource
                             FileInfoDs.FileInfoRow fileInfoRow = fileInfoDs.FileInfo.NewFileInfoRow();
 
                             string gitFolderPath = change.Path.ToString();
+                            if (CheckExistFileName(gitFolderPath))
+                            {
+                                continue;
+                            }
+
                             string displayFolderPath = gitFolderPath.Contains(forwardSlashChar) ? @"\" +
                                                  gitFolderPath.Substring(0, gitFolderPath.LastIndexOf(forwardSlashChar)).Replace(@"/", @"\") : @"\";
-                            string strFileName = gitFolderPath.Contains(forwardSlashChar) ? 
+                            if (CheckExistFileName(displayFolderPath))
+                            {
+                                continue;
+                            }
+
+                            string strFileName = gitFolderPath.Contains(forwardSlashChar) ?
                                                     gitFolderPath.Substring(gitFolderPath.LastIndexOf(forwardSlashChar) + 1) : gitFolderPath;
-                            string status = string.Empty;
-                            status = change.Status == LibGit2Sharp.ChangeKind.Modified ? ApConst.UpdateStatus : ApConst.AddStatus;
+                            if (CheckExistFileName(strFileName))
+                            {
+                                continue;
+                            }
+
+                            string status = this.GetStatusToGit(change.Status);
 
                             if (lstFileKey.Contains(Path.GetExtension(gitFolderPath).Trim()))
                             {
@@ -374,9 +390,16 @@ namespace ExportSource
                                     fileInfoRow.FileUrl = displayFolderPath;
                                     fileInfoRow.FileName = strFileName;
                                     fileInfoRow.status = status;
-                                    fileInfoRow.CreateDate = commit.Committer.When.ToString("dd-MM-yyyy");
+                                    fileInfoRow.Commiter = commiter;
                                     fileInfoDs.FileInfo.AddFileInfoRow(fileInfoRow);
                                     fileInfoRow.AcceptChanges();
+                                }
+                                else
+                                {
+                                    if(status == ApConst.DeleteStatus)
+                                    {
+                                        fileInfoDs.FileInfo.Rows.Remove(rowFileExist);
+                                    }
                                 }
                             }
                         }
@@ -387,7 +410,42 @@ namespace ExportSource
                 return fileInfoDs;
             }
         }
-        #endregion
+		#endregion
+
+		#region Funcions Child
+
+        private bool CheckExistFileName(string strCheck)
+        {
+            if(strCheck.Contains(@"\bin\")
+               || strCheck.Contains(@"\obj\")
+               || strCheck.Contains(@"\.vs\")
+               || strCheck.Contains(@"~$")
+               || strCheck.Contains(".suo"))
+            {
+                return true;
+            }
+            return false;
+        }
+
+		private string GetStatusToGit(ChangeKind kind)
+        {
+            string status = string.Empty;
+
+            if (kind == LibGit2Sharp.ChangeKind.Modified)
+            {
+                status = ApConst.UpdateStatus;
+            }
+            else if (kind == LibGit2Sharp.ChangeKind.Added)
+            {
+                status = ApConst.AddStatus;
+            }
+            else if (kind == LibGit2Sharp.ChangeKind.Deleted)
+            {
+                status = ApConst.DeleteStatus;
+            }
+
+            return status;
+        }
 
         private Boolean ValidationCheck()
         {
@@ -420,87 +478,53 @@ namespace ExportSource
             this.txtProgramLstPath.BackColor = Color.White;
             this.txtSourcePath.BackColor = Color.White;
         }
+
         private void InitControl()
         {
             this.chkboxSelectOutPut.Checked = false;
             this.dtGrvProgramList.Rows.Clear();
         }
 
-        #region PhuongDT
+		#endregion
 
-        #region Export Source and ProgramList
-        /// <summary>
-        /// Button Export ProgramList click
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnExport_Click(object sender, EventArgs e)
+		#region PhuongDT
+
+		#region Event Click Button Export Source and ProgramList
+		/// <summary>
+		/// Button Export ProgramList click
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void btnExport_Click(object sender, EventArgs e)
         {
             if (dtGrvProgramList.Rows.Count > 0)
             {
                 #region Export Source
 
-                string saveFolderPath = string.Empty;
+                string saveFilePath = string.Empty;
 
                 using (FolderBrowserDialog directchoosedlg = new FolderBrowserDialog())
                 {
                     if (directchoosedlg.ShowDialog() == DialogResult.OK)
                     {
-                        saveFolderPath = directchoosedlg.SelectedPath;
+                        saveFilePath = Path.Combine(directchoosedlg.SelectedPath, Path.GetFileName(txtProgramLstPath.Text));
 
-                        foreach (DataGridViewRow dgviewRow in dtGrvProgramList.Rows)
-                        {
-                            if (Convert.ToBoolean(dgviewRow.Cells[7].Value) == true)
-                            {
-
-                                string openFile = string.Empty;
-
-                                if (radChkBySource.Checked == true)
-                                {
-                                    openFile = this.txtSourcePath.Text;
-                                }
-                                else if (radChkByPrgList.Checked == true)
-                                {
-                                    openFile = this.txtProgramLstPath.Text;
-                                }
-
-                                string sourcePathOrigin = openFile + Convert.ToString(dgviewRow.Cells[3].Value);
-                                string sourceFileNameOrigin = Convert.ToString(dgviewRow.Cells[4].Value);
-                                string sourceOriginCombine = System.IO.Path.Combine(sourcePathOrigin, sourceFileNameOrigin);
-
-                                if (!System.IO.File.Exists(sourceOriginCombine))
-                                {
-                                    continue;
-                                }
-
-                                string sourcePathSave = Convert.ToString(dgviewRow.Cells[3].Value);
-                                string sourcePathSaveCombine = string.Empty;
-                                string sourceFileNameSave = sourceFileNameOrigin;
-
-                                string temPath = saveFolderPath + sourcePathSave;
-
-                                if (!System.IO.Directory.Exists(temPath))
-                                {
-                                    System.IO.Directory.CreateDirectory(temPath);
-                                }
-
-                                sourcePathSaveCombine = System.IO.Path.Combine(temPath, sourceFileNameOrigin);
-
-                                System.IO.File.Copy(sourceOriginCombine, sourcePathSaveCombine, true);
-                            }
-                        }
+                        this.ExportProgramList(saveFilePath);
                     }
                 }
 
                 #endregion
-
-
-                if (chkIsExportProgramList.Checked == true)
-                {
-                    this.ExportProgramList(saveFolderPath);
-                }
-
             }
+        }
+
+        #endregion
+
+        #region Event Click Button Setting Extention file
+
+        private void btnSetting__Click(object sender, EventArgs e)
+        {
+            SettingFileFrm settingFileFrm = new SettingFileFrm();
+            settingFileFrm.Show();
         }
 
         #endregion
@@ -510,14 +534,16 @@ namespace ExportSource
         /// Output file programlist
         /// </summary>
         /// <param name="savePath"></param>
-        private void ExportProgramList(string savePath)
+        private void ExportProgramList(string saveFilePath)
         {
             ExcelApp.Application excelApp = null;
+            // Create New File Excel
+            excelApp = new ExcelApp.Application();
+            ExcelApp.Workbook currentWorkbook = excelApp.Workbooks.Add(Type.Missing);
             try
             {
                 // Khởi tạo các object
-                excelApp = new ExcelApp.Application();
-                ExcelApp.Workbook currentWorkbook = excelApp.Workbooks.Add(Type.Missing);
+               // ExcelApp.Workbook currentWorkbook = excelApp.Workbooks.Add(Type.Missing);
                 ExcelApp.Worksheet currentWorksheet = (ExcelApp.Worksheet)currentWorkbook.ActiveSheet;
                 currentWorksheet.Columns.ColumnWidth = 18;
                 currentWorksheet.Name = "プログラム一覧";
@@ -587,34 +613,34 @@ namespace ExportSource
 
                         DataGridViewRow dgRow = dtGrvProgramList.Rows[rowIndex - 4];
 
-                        if (Convert.ToBoolean(dgRow.Cells[7].Value) == false)
+                        if (Convert.ToBoolean(dgRow.Cells[6].Value) == false)
                         {
                             continue;
                         }
 
                         // No.
-                        currentWorksheet.Cells[rowNoExcel + 2, 1] = rowNoExcel - 3;
+                        currentWorksheet.Cells[rowNoExcel + 2, 1] = dgRow.Cells[0].Value;
 
                         // Date
                         currentWorksheet.Cells[rowNoExcel + 2, 2] = DateTime.Now.ToString("yyyy/MM/dd");
 
                         // REP.
-                        currentWorksheet.Cells[rowNoExcel + 2, 3] = dgRow.Cells[1].Value;
+                        currentWorksheet.Cells[rowNoExcel + 2, 3] = dgRow.Cells[5].Value;
 
                         // Project Name
-                        currentWorksheet.Cells[rowNoExcel + 2, 4] = dgRow.Cells[2].Value;
+                        currentWorksheet.Cells[rowNoExcel + 2, 4] = string.Empty;
 
                         // Path
-                        currentWorksheet.Cells[rowNoExcel + 2, 5] = dgRow.Cells[3].Value;
+                        currentWorksheet.Cells[rowNoExcel + 2, 5] = dgRow.Cells[1].Value;
 
                         // File
-                        currentWorksheet.Cells[rowNoExcel + 2, 6] = dgRow.Cells[4].Value;
+                        currentWorksheet.Cells[rowNoExcel + 2, 6] = dgRow.Cells[2].Value;
 
                         // Function
                         currentWorksheet.Cells[rowNoExcel + 2, 7] = string.Empty;
 
                         // Add Update Delete
-                        currentWorksheet.Cells[rowNoExcel + 2, 8] = dgRow.Cells[5].Value;
+                        currentWorksheet.Cells[rowNoExcel + 2, 8] = dgRow.Cells[3].Value;
 
                         // 1st Check Plan Date
                         currentWorksheet.Cells[rowNoExcel + 2, 9] = string.Empty;
@@ -659,7 +685,7 @@ namespace ExportSource
                         exportSaveFileDialog.Title = "Select Excel File";
                         exportSaveFileDialog.Filter = "Microsoft Office Excel Workbook(*.xlsx)|*.xlsx";
 
-                        string fullFileName = string.Format(@"{0}\ProgramList.xlsx", savePath);
+                        string fullFileName = Path.Combine(saveFilePath);
 
                         currentWorkbook.SaveAs(fullFileName, ExcelApp.XlFileFormat.xlOpenXMLWorkbook, 
                             System.Reflection.Missing.Value, System.Reflection.Missing.Value, false, false,
@@ -671,23 +697,14 @@ namespace ExportSource
                         MessageBox.Show("Export thành công");
                     }
                 }
-                else
-                {
-                    MessageBox.Show("Export thất bại");
-                }
                 #endregion
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show(ex.Message);
-            }
-            finally
-            {
-                if (excelApp != null)
-                {
-                    excelApp.Quit();
-                }
+                currentWorkbook.Saved = true;
+                excelApp.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
             }
         }
 
@@ -722,40 +739,25 @@ namespace ExportSource
         /// <param name="e"></param>
         private void dtGrvProgramList_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            int checkboxIndexCell = 7;
+            int checkboxIndexCell = 6;
 
             foreach (DataGridViewRow row in dtGrvProgramList.Rows)
             {
                 if (Convert.ToBoolean(row.Cells[checkboxIndexCell].Value) == true)
                 {
-                    this.chkIsExportProgramList.Enabled = true;
+                    this.btnExport.Enabled = true;
                     break;
                 }
                 else
                 {
-                    this.chkIsExportProgramList.Enabled = false;
+                    this.btnExport.Enabled = false;
                 }
             }
         }
 
         #endregion
 
-        #endregion
-
-        private void btnExit_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        #region Setting Extention file
-
-        private void btnSetting__Click(object sender, EventArgs e)
-        {
-            SettingFileFrm settingFileFrm = new SettingFileFrm();
-            settingFileFrm.Show();
-        }
-
-        #endregion
+        #region Event Click Button Clear
 
         private void btnClear_Click(object sender, EventArgs e)
         {
@@ -764,5 +766,9 @@ namespace ExportSource
             this.txtProgramLstPath.Text = string.Empty;
             this.txtSourcePath.Text = string.Empty;
         }
+
+        #endregion
+
+        #endregion
     }
 }
