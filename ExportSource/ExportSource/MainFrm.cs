@@ -262,9 +262,13 @@ namespace ExportSource
                     row.FileName = excelRange.Cells[i, 6].Value2.ToString();
                     row.status = excelRange.Cells[i, 8].Value2.ToString();
 
-                    string fullPath = Path.Combine(txtSourcePath.Text, row.FileUrl, row.FileName);
+                    // ghép đường dẫn tương đối
+                    string relativePath = Path.Combine(row.FileUrl, row.FileName);
+                    
+                    // ghép full đương dẫn file(đường dẫn tương đối có \\ đằng trước nên ko combine được)
+                    string absolutePath = string.Format("{0}{1}", txtSourcePath.Text, relativePath);
 
-                    row.checkexist = File.Exists(fullPath)? ApConst.ExistStatus : ApConst.NotExistStatus;
+                    row.checkexist = File.Exists(absolutePath) ? ApConst.ExistStatus : ApConst.NotExistStatus;
 
                     fileInfoDs.FileInfo.AddFileInfoRow(row);
                 }
