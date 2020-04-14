@@ -1,1 +1,6 @@
-.suo
+.sql
+.cs
+.xsd
+.xaml
+.csproj
+.sln
