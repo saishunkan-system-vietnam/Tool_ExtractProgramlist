@@ -27,8 +27,9 @@ namespace ExportSource
 			public static string AddStatus = "Add";
             public static string UpdateStatus = "Update";
             public static string DeleteStatus = "Delete";
-			#endregion
-		}
+            public static string RenameStatus = "Rename";
+            #endregion
+        }
 
 		private string extSettingPath = Path.GetFullPath("InputFileExtension.txt").Replace("\\bin\\Debug", "\\FileText");
 
@@ -47,7 +48,7 @@ namespace ExportSource
             this.InitControl();
 
             this.MaximizeBox = false;
-            this.btnExport.Enabled = false;
+            this.chkExportProgramList.Checked = false;
         }
 
         #endregion
@@ -188,14 +189,18 @@ namespace ExportSource
 
             foreach (DataGridViewRow row in dtGrvProgramList.Rows)
             {
-                if (this.chkboxSelectOutPut.Checked == true && this.dtGrvProgramList[4, row.Index].Value.ToString() == "Exist")
+                if (this.chkboxSelectOutPut.Checked == true)
                 {
-                    this.dtGrvProgramList[6, row.Index].Value = true;
-
+                    if(this.dtGrvProgramList[4, row.Index].Value.ToString() != "Not Exist")
+                    {
+                        this.dtGrvProgramList[6, row.Index].Value = true;
+                        this.chkExportProgramList.Checked = true;
+                    }
                 }
                 else
                 {
                     this.dtGrvProgramList[6, row.Index].Value = false;
+                    //this.chkExportProgramList.Checked = false;
                 }
             }
         }
@@ -264,7 +269,7 @@ namespace ExportSource
 
                     // ghép đường dẫn tương đối
                     string relativePath = Path.Combine(row.FileUrl, row.FileName);
-                    
+
                     // ghép full đương dẫn file(đường dẫn tương đối có \\ đằng trước nên ko combine được)
                     string absolutePath = string.Format("{0}{1}", txtSourcePath.Text, relativePath);
 
@@ -280,7 +285,7 @@ namespace ExportSource
             catch (Exception)
             {
                 excelApp.Quit();
-                MessageBox.Show("Kiểm tra lại file data");
+                MessageBox.Show("Check File Data Again!");
                 return null;
             }
             return fileInfoDs;
@@ -361,7 +366,7 @@ namespace ExportSource
                         {
                             FileInfoDs.FileInfoRow fileInfoRow = fileInfoDs.FileInfo.NewFileInfoRow();
 
-                            string gitFolderPath = change.Path.ToString();
+                            string gitFolderPath = change.OldPath.ToString();
                             if (CheckExistFileName(gitFolderPath))
                             {
                                 continue;
@@ -379,6 +384,20 @@ namespace ExportSource
                             if (CheckExistFileName(strFileName))
                             {
                                 continue;
+                            }
+
+                            string gitFolderNewPath = string.Empty;
+                            string displayFolderNewPath = string.Empty;
+                            string strNewFileName = string.Empty;
+
+                            if (change.OldPath.ToString() != change.Path.ToString())
+                            {
+                                gitFolderNewPath = change.Path.ToString();
+                                displayFolderNewPath = gitFolderNewPath.Contains(forwardSlashChar) ? @"\" +
+                                                 gitFolderNewPath.Substring(0, gitFolderNewPath.LastIndexOf(forwardSlashChar)).Replace(@"/", @"\") : @"\";
+
+                                strNewFileName = gitFolderNewPath.Contains(forwardSlashChar) ?
+                                                    gitFolderNewPath.Substring(gitFolderNewPath.LastIndexOf(forwardSlashChar) + 1) : gitFolderNewPath;
                             }
 
                             string status = this.GetStatusToGit(change.Status);
@@ -403,6 +422,15 @@ namespace ExportSource
                                     if(status == ApConst.DeleteStatus)
                                     {
                                         fileInfoDs.FileInfo.Rows.Remove(rowFileExist);
+                                    }
+                                    else if(status == ApConst.RenameStatus)
+                                    {
+                                        rowFileExist.BeginEdit();
+                                        rowFileExist.FileUrl = displayFolderNewPath;
+                                        rowFileExist.FileName = strNewFileName;
+                                        rowFileExist.Commiter = commiter;
+                                        rowFileExist.EndEdit();
+                                        fileInfoDs.FileInfo.AcceptChanges();
                                     }
                                 }
                             }
@@ -446,6 +474,10 @@ namespace ExportSource
             else if (kind == LibGit2Sharp.ChangeKind.Deleted)
             {
                 status = ApConst.DeleteStatus;
+            }
+            else if (kind == LibGit2Sharp.ChangeKind.Renamed)
+            {
+                status = ApConst.RenameStatus;
             }
 
             return status;
@@ -511,7 +543,9 @@ namespace ExportSource
                 {
                     if (directchoosedlg.ShowDialog() == DialogResult.OK)
                     {
-                        saveFilePath = Path.Combine(directchoosedlg.SelectedPath, Path.GetFileName(txtProgramLstPath.Text));
+                        saveFilePath = !String.IsNullOrEmpty(txtProgramLstPath.Text) ?
+                            Path.Combine(directchoosedlg.SelectedPath, Path.GetFileName(txtProgramLstPath.Text))
+                            : Path.Combine(directchoosedlg.SelectedPath, "NewProgramList.xlsx");
 
                         this.ExportProgramList(saveFilePath);
                     }
@@ -621,6 +655,21 @@ namespace ExportSource
                         {
                             continue;
                         }
+                        else if(chkExportProgramList.Checked == false 
+                            && dgRow.Cells[4].Value.ToString() == ApConst.NotExistStatus
+                            && Convert.ToBoolean(dgRow.Cells[6].Value) == true)
+                        {
+                            continue;
+                        }
+                        else if(chkExportProgramList.Checked == true 
+                            && dgRow.Cells[4].Value.ToString() == ApConst.NotExistStatus
+                            && Convert.ToBoolean(dgRow.Cells[6].Value) == true)
+                        {
+                            continue;
+                        }
+
+                        // Set Color for Row Not Commit
+                        FormattingExcelCells(currentWorksheet.get_Range("A" + (rowNoExcel + 2).ToString(), "H" + (rowNoExcel + 2)), "#FFFF00", System.Drawing.Color.Red, true);
 
                         // No.
                         currentWorksheet.Cells[rowNoExcel + 2, 1] = dgRow.Cells[0].Value;
@@ -698,16 +747,17 @@ namespace ExportSource
                             System.Reflection.Missing.Value, System.Reflection.Missing.Value, System.Reflection.Missing.Value);
 
                         currentWorkbook.Saved = true;
-                        MessageBox.Show("Export thành công");
+                        MessageBox.Show("Export Succes");
                     }
                 }
                 #endregion
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 currentWorkbook.Saved = true;
                 excelApp.Quit();
+                MessageBox.Show(ex.ToString());
                 System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
             }
         }
@@ -749,12 +799,12 @@ namespace ExportSource
             {
                 if (Convert.ToBoolean(row.Cells[checkboxIndexCell].Value) == true)
                 {
-                    this.btnExport.Enabled = true;
+                    this.chkExportProgramList.Checked = true;
                     break;
                 }
                 else
                 {
-                    this.btnExport.Enabled = false;
+                    this.chkExportProgramList.Checked = false;
                 }
             }
         }
