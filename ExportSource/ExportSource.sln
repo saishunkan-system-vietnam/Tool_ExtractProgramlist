@@ -5,16 +5,30 @@ VisualStudioVersion = 15.0.28307.1062
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportSource", "ExportSource\ExportSource.csproj", "{4EB7F3C5-6F6A-46DE-A8FA-2688B8263883}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SSVSourceExtract", "SSVSourceExtract\SSVSourceExtract.vdproj", "{0553E3B8-B1DB-436D-A631-0F25AB3F0374}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4EB7F3C5-6F6A-46DE-A8FA-2688B8263883}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4EB7F3C5-6F6A-46DE-A8FA-2688B8263883}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EB7F3C5-6F6A-46DE-A8FA-2688B8263883}.Debug|x86.ActiveCfg = Debug|x86
+		{4EB7F3C5-6F6A-46DE-A8FA-2688B8263883}.Debug|x86.Build.0 = Debug|x86
 		{4EB7F3C5-6F6A-46DE-A8FA-2688B8263883}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EB7F3C5-6F6A-46DE-A8FA-2688B8263883}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EB7F3C5-6F6A-46DE-A8FA-2688B8263883}.Release|x86.ActiveCfg = Release|x86
+		{4EB7F3C5-6F6A-46DE-A8FA-2688B8263883}.Release|x86.Build.0 = Release|x86
+		{0553E3B8-B1DB-436D-A631-0F25AB3F0374}.Debug|Any CPU.ActiveCfg = Debug
+		{0553E3B8-B1DB-436D-A631-0F25AB3F0374}.Debug|x86.ActiveCfg = Debug
+		{0553E3B8-B1DB-436D-A631-0F25AB3F0374}.Debug|x86.Build.0 = Debug
+		{0553E3B8-B1DB-436D-A631-0F25AB3F0374}.Release|Any CPU.ActiveCfg = Release
+		{0553E3B8-B1DB-436D-A631-0F25AB3F0374}.Release|x86.ActiveCfg = Release
+		{0553E3B8-B1DB-436D-A631-0F25AB3F0374}.Release|x86.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

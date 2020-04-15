@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.grbSearchInf = new System.Windows.Forms.GroupBox();
             this.DateTimeGetChangeControl = new System.Windows.Forms.DateTimePicker();
             this.radChkBySource = new System.Windows.Forms.RadioButton();
@@ -89,10 +89,12 @@
             // radChkBySource
             // 
             this.radChkBySource.AutoSize = true;
+            this.radChkBySource.Checked = true;
             this.radChkBySource.Location = new System.Drawing.Point(639, 68);
             this.radChkBySource.Name = "radChkBySource";
             this.radChkBySource.Size = new System.Drawing.Size(108, 17);
             this.radChkBySource.TabIndex = 9;
+            this.radChkBySource.TabStop = true;
             this.radChkBySource.Text = "Check By Source";
             this.radChkBySource.UseVisualStyleBackColor = true;
             this.radChkBySource.CheckedChanged += new System.EventHandler(this.radChkBySource_CheckedChanged);
@@ -100,12 +102,10 @@
             // radChkByPrgList
             // 
             this.radChkByPrgList.AutoSize = true;
-            this.radChkByPrgList.Checked = true;
             this.radChkByPrgList.Location = new System.Drawing.Point(639, 27);
             this.radChkByPrgList.Name = "radChkByPrgList";
             this.radChkByPrgList.Size = new System.Drawing.Size(129, 17);
             this.radChkByPrgList.TabIndex = 9;
-            this.radChkByPrgList.TabStop = true;
             this.radChkByPrgList.Text = "Check By ProgramList";
             this.radChkByPrgList.UseVisualStyleBackColor = true;
             this.radChkByPrgList.CheckedChanged += new System.EventHandler(this.radChkByPrgList_CheckedChanged);
@@ -221,8 +221,8 @@
             // 
             // No
             // 
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.No.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.No.DefaultCellStyle = dataGridViewCellStyle1;
             this.No.FillWeight = 44.08547F;
             this.No.HeaderText = "No";
             this.No.MinimumWidth = 6;
@@ -314,7 +314,7 @@
             // 
             this.chkExportProgramList.AutoSize = true;
             this.chkExportProgramList.Location = new System.Drawing.Point(915, 597);
-            this.chkExportProgramList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.chkExportProgramList.Margin = new System.Windows.Forms.Padding(2);
             this.chkExportProgramList.Name = "chkExportProgramList";
             this.chkExportProgramList.Size = new System.Drawing.Size(117, 17);
             this.chkExportProgramList.TabIndex = 6;
@@ -348,7 +348,7 @@
             this.Controls.Add(this.grbSearchInf);
             this.Name = "MainFrm";
             this.Text = "Tool extract source and program list";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Load += new System.EventHandler(this.Form_Load);
             this.grbSearchInf.ResumeLayout(false);
             this.grbSearchInf.PerformLayout();
             this.grbProgramList.ResumeLayout(false);

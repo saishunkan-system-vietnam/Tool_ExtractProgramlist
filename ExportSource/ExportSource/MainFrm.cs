@@ -30,6 +30,14 @@ namespace ExportSource
             public static string DeleteStatus = "Delete";
             public static string RenameStatus = "Rename";
             #endregion
+
+            #region FileSetting
+            public static string FolderFileSetting = @"C:\ProgramData\SSV\";
+            public static string RelativeFolderSetting = @"FileSetting";
+            public static string FileNameSetting = @"ExtensionSetting.ini";
+            public static string FullFolderSetting = Path.Combine(FolderFileSetting, RelativeFolderSetting);
+            public static string FullFilePathSetting = Path.Combine(FullFolderSetting, FileNameSetting);
+            #endregion
         }
 
         struct GrvColumnName
@@ -43,26 +51,63 @@ namespace ExportSource
             public static int DRV_CHKBOX_SELECT = 6;
         }
 
-        private string extSettingPath = Path.GetFullPath("InputFileExtension.txt").Replace("\\bin\\Debug", "\\FileText");
+        private string extSettingPath = string.Empty;
 
         public MainFrm()
         {
             InitializeComponent();
         }
 
+        private void CopyFileSetting(string destFileSetting)
+        {
+            //Run in debug
+            string appFolder = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\.."));
+            string sourceFileSetting = Path.Combine(appFolder.Replace(@"\bin", ""), ApConst.RelativeFolderSetting, ApConst.FileNameSetting);
+            // End Run in debug
+
+            //string appFolder = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory);
+            //string sourceFileSetting = Path.Combine(appFolder, ApConst.RelativeFolderSetting, ApConst.FileNameSetting);
+
+            if (!Directory.Exists(ApConst.FullFolderSetting))
+            {
+                Directory.CreateDirectory(ApConst.FullFolderSetting);
+            }
+
+            if (!File.Exists(destFileSetting))
+            {
+                File.Copy(sourceFileSetting, destFileSetting, true);
+            }
+        }
+
+        public void LoadSetting(out string outFilePathSetting)
+        {
+            if (!File.Exists(ApConst.FullFilePathSetting))
+            {
+                this.CopyFileSetting(ApConst.FullFilePathSetting);
+            }
+            outFilePathSetting = ApConst.FullFilePathSetting;
+        }
+
         #region Search Area
 
         #region Load Form
-
-        private void Form1_Load(object sender, EventArgs e)
+        private void Form_Load(object sender, EventArgs e)
         {
             this.ClearErr();
             this.InitControl();
-
-            this.MaximizeBox = false;
-            this.chkExportProgramList.Checked = false;
+            LoadSetting(out extSettingPath);
         }
 
+        private void InitControl()
+        {
+            this.chkboxSelectOutPut.Checked = false;
+            this.dtGrvProgramList.Rows.Clear();
+            this.MaximizeBox = false;
+            this.chkExportProgramList.Checked = false;
+            this.chkExportSource.Checked = false;
+            this.dtGrvProgramList.RowHeadersVisible = false;
+            this.FindBySourceCheck();
+        }
         #endregion
 
         #region  Even Button Open Program list click
@@ -188,6 +233,7 @@ namespace ExportSource
             }
             catch (Exception ex)
             {
+                MessageBox.Show(ex.Message);
             }
         }
         #endregion
@@ -261,6 +307,11 @@ namespace ExportSource
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void radChkBySource_CheckedChanged(object sender, EventArgs e)
+        {
+            this.FindBySourceCheck();
+        }
+
+        private void FindBySourceCheck()
         {
             if (this.radChkBySource.Checked == true)
             {
@@ -544,12 +595,6 @@ namespace ExportSource
         {
             this.txtProgramLstPath.BackColor = Color.White;
             this.txtSourcePath.BackColor = Color.White;
-        }
-
-        private void InitControl()
-        {
-            this.chkboxSelectOutPut.Checked = false;
-            this.dtGrvProgramList.Rows.Clear();
         }
 
         #endregion
@@ -915,5 +960,6 @@ namespace ExportSource
         #endregion
 
         #endregion
+
     }
 }

@@ -10,7 +10,7 @@ namespace ExportSource
 	{
 		private List<string> listKey = null;
 
-		string fullPath = string.Empty;
+		string fileSettingPath = string.Empty;
 
 		public SettingFileFrm()
 		{
@@ -21,8 +21,11 @@ namespace ExportSource
 
 		private void LoadKeyConfig()
 		{
-			fullPath = Path.GetFullPath("InputFileExtension.txt").Replace("\\bin\\Debug", "\\FileText");
-			listKey = new List<string>(File.ReadAllLines(fullPath));
+            MainFrm mainFrm = new MainFrm();
+            mainFrm.LoadSetting(out fileSettingPath);
+            mainFrm.Close();
+            mainFrm.Dispose();
+            listKey = new List<string>(File.ReadAllLines(fileSettingPath));
 
 			foreach (string i in listKey)
 			{
@@ -41,7 +44,7 @@ namespace ExportSource
 		{
 			List<string> items = new List<string>(ListAllKey(txtListKey.Text));
 
-			using (StreamWriter writer = new StreamWriter(fullPath))
+			using (StreamWriter writer = new StreamWriter(fileSettingPath))
 			{
 				foreach (string key in items)
 				{
