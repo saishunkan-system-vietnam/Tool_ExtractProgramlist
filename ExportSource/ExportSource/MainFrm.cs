@@ -160,6 +160,13 @@ namespace ExportSource
         }
         #endregion
 
+
+        private void ResetControl()
+        {
+            this.chkboxSelectOutPut.Checked = false;
+            this.chkExportProgramList.Checked = false;
+            this.chkExportSource.Checked = false;
+        }
         #region Even Button Find click
         /// <summary>
         ///  Even Button Find click
@@ -169,6 +176,7 @@ namespace ExportSource
         private void btnFind_Click(object sender, EventArgs e)
         {
             this.ClearErr();
+            this.ResetControl();
             try
             {
                 // Get file code in source
@@ -636,9 +644,14 @@ namespace ExportSource
         {
             if (dtGrvProgramList.Rows.Count > 0)
             {
-                if (CheckRowStatus())
+                if (!IsFileSelected())
                 {
-                    MessageBox.Show("Please check data rows again!");
+                    MessageBox.Show("Please select file to export!");
+                    return;
+                }
+                if (chkExportSource.Checked == false && chkExportProgramList.Checked == false)
+                {
+                    MessageBox.Show("Please specify target export. Source or programlist");
                     return;
                 }
                 using (FolderBrowserDialog directchoosedlg = new FolderBrowserDialog())
@@ -664,11 +677,6 @@ namespace ExportSource
                             }
                         }
 
-                        if (chkExportSource.Checked == false && chkExportProgramList.Checked == false)
-                        {
-                            MessageBox.Show("Please specify target export. Source or programlist");
-                        }
-
                         if (chkExportSource.Checked == true)
                         {
                             this.ExportSource(exportFoderPath);
@@ -682,33 +690,31 @@ namespace ExportSource
                 }
             }
         }
-		#endregion
+        #endregion
 
-		#region Check Row Status
+        #region Check Row Status
 
-        private bool CheckRowStatus()
+        private bool IsFileSelected()
         {
-            int check = 0;
             foreach (DataGridViewRow rowCheck in dtGrvProgramList.Rows)
             {
-                if (Convert.ToBoolean(rowCheck.Cells[6].Value) == true)
-                    check++;
+                if (Convert.ToBoolean(rowCheck.Cells[GrvColumnName.DRV_CHKBOX_SELECT].Value) == true)
+                {
+                    return true;
+                }
             }
-
-            if (check == 0)
-                return true;
 
             return false;
         }
 
-		#endregion
+        #endregion
 
-		#region Export Source
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="exportPath"></param>
-		private void ExportSource(string exportPath)
+        #region Export Source
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="exportPath"></param>
+        private void ExportSource(string exportPath)
         {
             foreach (DataGridViewRow dgviewRow in dtGrvProgramList.Rows)
             {
@@ -846,7 +852,7 @@ namespace ExportSource
                         {
                             continue;
                         }
-                        if ( dgRow.Cells[GrvColumnName.DRV_CHECK_EXIST].Value.ToString() == ApConst.NotExistStatus)
+                        if (dgRow.Cells[GrvColumnName.DRV_CHECK_EXIST].Value.ToString() == ApConst.NotExistStatus)
                         {
                             continue;
                         }
@@ -1005,9 +1011,9 @@ namespace ExportSource
             this.txtSourcePath.Text = string.Empty;
         }
 
-		#endregion
+        #endregion
 
-		#endregion
+        #endregion
 
     }
 }
