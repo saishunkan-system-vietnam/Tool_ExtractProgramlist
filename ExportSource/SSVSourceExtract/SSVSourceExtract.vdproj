@@ -27,6 +27,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_27B3E6A90C4CE4C3366B91D7E797A1E0"
+        "OwnerKey" = "8:_F0D1EE3B93274032AEC1BA474BF25FB3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_2B5EBC32FE3C41E1B1CC484F4306AA16"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -40,18 +46,6 @@
         "Entry"
         {
         "MsmKey" = "8:_40812DEEAB614F7EA7C4454FBAB19BE8"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_43D8E75B24844871BE992F794252B678"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4C04F14929AE40C390C13443312E5E87"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -99,6 +93,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_93933918F713479F8CDDBDFA7D82E2DD"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_A4A495B263314461A099E5704082B0AC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -113,12 +113,6 @@
         {
         "MsmKey" = "8:_B5FF264EC94B4065BACFC51DCFF0730D"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B7A7EA735823AFE0B4BD3CB4B9B73BDC"
-        "OwnerKey" = "8:_F0D1EE3B93274032AEC1BA474BF25FB3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -160,7 +154,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B7A7EA735823AFE0B4BD3CB4B9B73BDC"
+        "OwnerKey" = "8:_27B3E6A90C4CE4C3366B91D7E797A1E0"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -220,6 +214,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
+                    }
+                }
             }
         }
     }
@@ -290,6 +292,37 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_27B3E6A90C4CE4C3366B91D7E797A1E0"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:LibGit2Sharp, Version=0.26.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_27B3E6A90C4CE4C3366B91D7E797A1E0"
+                    {
+                    "Name" = "8:LibGit2Sharp.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:LibGit2Sharp.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_F31BF5453E2E4621ADF74292FDEA5521"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2B5EBC32FE3C41E1B1CC484F4306AA16"
             {
             "SourcePath" = "8:C:\\Program Files (x86)\\SSV\\ExportSource\\lib\\debian.9-x64\\libgit2-106a5f2.so"
@@ -336,46 +369,6 @@
             "TargetName" = "8:libgit2-106a5f2.so"
             "Tag" = "8:"
             "Folder" = "8:_473EF4B588F742158A75396B359E7F80"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_43D8E75B24844871BE992F794252B678"
-            {
-            "SourcePath" = "8:..\\ExportSource\\SSVIcon.ico"
-            "TargetName" = "8:SSVIcon.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_F31BF5453E2E4621ADF74292FDEA5521"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4C04F14929AE40C390C13443312E5E87"
-            {
-            "SourcePath" = "8:..\\ExportSource\\AppIcon.ico"
-            "TargetName" = "8:AppIcon.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_F31BF5453E2E4621ADF74292FDEA5521"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -530,6 +523,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_93933918F713479F8CDDBDFA7D82E2DD"
+            {
+            "SourcePath" = "8:..\\ExportSource\\AppIcon.ico"
+            "TargetName" = "8:AppIcon.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_F31BF5453E2E4621ADF74292FDEA5521"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A4A495B263314461A099E5704082B0AC"
             {
             "SourcePath" = "8:C:\\Program Files (x86)\\SSV\\ExportSource\\lib\\alpine.3.9-x64\\libgit2-106a5f2.so"
@@ -588,37 +601,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B7A7EA735823AFE0B4BD3CB4B9B73BDC"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:LibGit2Sharp, Version=0.26.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_B7A7EA735823AFE0B4BD3CB4B9B73BDC"
-                    {
-                    "Name" = "8:LibGit2Sharp.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:LibGit2Sharp.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_F31BF5453E2E4621ADF74292FDEA5521"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BF8B10960E954583AA958EC0EFB0C58B"
@@ -933,15 +915,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:ExportSource"
-        "ProductCode" = "8:{99356147-39F7-4679-A72C-F91E899EF311}"
-        "PackageCode" = "8:{91DBE240-DCD3-46F1-BE50-6CF3B090ABC8}"
+        "ProductCode" = "8:{D445D8D1-3F69-4BC3-9F82-9969EFAF78A8}"
+        "PackageCode" = "8:{4DBDC3AD-95F7-4609-A52B-2D4782492534}"
         "UpgradeCode" = "8:{9A40E14C-41FE-4AC3-8ABD-E1AB55B0476C}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:1.0.1"
         "Manufacturer" = "8:SSV"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -951,7 +933,7 @@
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
-        "ARPPRODUCTICON" = "8:_43D8E75B24844871BE992F794252B678"
+        "ARPPRODUCTICON" = "8:_93933918F713479F8CDDBDFA7D82E2DD"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
@@ -1054,23 +1036,9 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_0F88A804D7EB49E2BB60EEE8B0042F0A"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_1CA183E7367C4F45832AA92A3DA6F2AD"
             {
-            "Name" = "8:SSVSoureExtract"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_F0D1EE3B93274032AEC1BA474BF25FB3"
-            "Folder" = "8:_D9938F6CDA234A9E80A35E727BE1C103"
-            "WorkingFolder" = "8:_F31BF5453E2E4621ADF74292FDEA5521"
-            "Icon" = "8:_4C04F14929AE40C390C13443312E5E87"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_6F3EB49777794B63932936511550D616"
-            {
-            "Name" = "8:SSVSoureExtract"
+            "Name" = "8:SSVExtractSource"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -1079,7 +1047,21 @@
             "Target" = "8:_F0D1EE3B93274032AEC1BA474BF25FB3"
             "Folder" = "8:_3BC3B534DBA9425AAC4C258728861253"
             "WorkingFolder" = "8:_F31BF5453E2E4621ADF74292FDEA5521"
-            "Icon" = "8:_4C04F14929AE40C390C13443312E5E87"
+            "Icon" = "8:_93933918F713479F8CDDBDFA7D82E2DD"
+            "Feature" = "8:"
+            }
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_74EFE3656EB846F987C99A8D0DA0ADDC"
+            {
+            "Name" = "8:SSVExtractSource"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_F0D1EE3B93274032AEC1BA474BF25FB3"
+            "Folder" = "8:_D9938F6CDA234A9E80A35E727BE1C103"
+            "WorkingFolder" = "8:_F31BF5453E2E4621ADF74292FDEA5521"
+            "Icon" = "8:_93933918F713479F8CDDBDFA7D82E2DD"
             "Feature" = "8:"
             }
         }
@@ -1483,7 +1465,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F0D1EE3B93274032AEC1BA474BF25FB3"
             {
-            "SourcePath" = "8:..\\ExportSource\\obj\\x86\\Debug\\ExportSource.exe"
+            "SourcePath" = "8:..\\ExportSource\\obj\\x86\\Release\\ExportSource.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_F31BF5453E2E4621ADF74292FDEA5521"
