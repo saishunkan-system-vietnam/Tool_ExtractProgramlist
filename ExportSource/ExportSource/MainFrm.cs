@@ -106,6 +106,8 @@ namespace ExportSource
             this.chkExportProgramList.Checked = false;
             this.chkExportSource.Checked = false;
             this.dtGrvProgramList.RowHeadersVisible = false;
+            this.lblProjectName.Visible = false;
+            this.txtInputProjectName.Visible = false;
             this.FindBySourceCheck();
         }
         #endregion
@@ -252,6 +254,29 @@ namespace ExportSource
                 this.txtProgramLstPath.Text = files[0];
             }
         }
+        #endregion
+
+        #region Check Status For ChkExportProgramList
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chkExportProgramList_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkExportProgramList.Checked == true)
+            {
+                this.lblProjectName.Visible = true;
+                this.txtInputProjectName.Visible = true;
+            }
+            else
+            {
+                this.lblProjectName.Visible = false;
+                this.txtInputProjectName.Visible = false;
+            }
+        }
+
         #endregion
 
         #endregion
@@ -611,6 +636,11 @@ namespace ExportSource
         {
             if (dtGrvProgramList.Rows.Count > 0)
             {
+                if (CheckRowStatus())
+                {
+                    MessageBox.Show("Please check data rows again!");
+                    return;
+                }
                 using (FolderBrowserDialog directchoosedlg = new FolderBrowserDialog())
                 {
                     if (directchoosedlg.ShowDialog() == DialogResult.OK)
@@ -634,7 +664,6 @@ namespace ExportSource
                             }
                         }
 
-
                         if (chkExportSource.Checked == false && chkExportProgramList.Checked == false)
                         {
                             MessageBox.Show("Please specify target export. Source or programlist");
@@ -653,14 +682,33 @@ namespace ExportSource
                 }
             }
         }
-        #endregion
+		#endregion
 
-        #region Export Source
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="exportPath"></param>
-        private void ExportSource(string exportPath)
+		#region Check Row Status
+
+        private bool CheckRowStatus()
+        {
+            int check = 0;
+            foreach (DataGridViewRow rowCheck in dtGrvProgramList.Rows)
+            {
+                if (Convert.ToBoolean(rowCheck.Cells[6].Value) == true)
+                    check++;
+            }
+
+            if (check == 0)
+                return true;
+
+            return false;
+        }
+
+		#endregion
+
+		#region Export Source
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="exportPath"></param>
+		private void ExportSource(string exportPath)
         {
             foreach (DataGridViewRow dgviewRow in dtGrvProgramList.Rows)
             {
@@ -820,7 +868,7 @@ namespace ExportSource
                         currentWorksheet.Cells[rowNoExcel + 2, 3] = dgRow.Cells[GrvColumnName.DRV_COMMITER].Value;
 
                         // Project Name
-                        currentWorksheet.Cells[rowNoExcel + 2, 4] = string.Empty;
+                        currentWorksheet.Cells[rowNoExcel + 2, 4] = txtInputProjectName.Text;
 
                         // Path
                         currentWorksheet.Cells[rowNoExcel + 2, 5] = dgRow.Cells[GrvColumnName.DRV_PATH].Value;
@@ -957,9 +1005,9 @@ namespace ExportSource
             this.txtSourcePath.Text = string.Empty;
         }
 
-        #endregion
+		#endregion
 
-        #endregion
+		#endregion
 
     }
 }
