@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.grbSearchInf = new System.Windows.Forms.GroupBox();
             this.DateTimeGetChangeControl = new System.Windows.Forms.DateTimePicker();
             this.radChkBySource = new System.Windows.Forms.RadioButton();
@@ -43,6 +43,13 @@
             this.grbProgramList = new System.Windows.Forms.GroupBox();
             this.chkboxSelectOutPut = new System.Windows.Forms.CheckBox();
             this.dtGrvProgramList = new System.Windows.Forms.DataGridView();
+            this.btnExport = new System.Windows.Forms.Button();
+            this.btnClear = new System.Windows.Forms.Button();
+            this.btnSetting = new System.Windows.Forms.Button();
+            this.chkExportProgramList = new System.Windows.Forms.CheckBox();
+            this.chkExportSource = new System.Windows.Forms.CheckBox();
+            this.txtInputProjectName = new System.Windows.Forms.TextBox();
+            this.lblProjectName = new System.Windows.Forms.Label();
             this.No = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PathFile = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.FileName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -50,11 +57,6 @@
             this.CheckExist = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.REP = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Check = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.btnExport = new System.Windows.Forms.Button();
-            this.btnClear = new System.Windows.Forms.Button();
-            this.btnSetting = new System.Windows.Forms.Button();
-            this.chkExportProgramList = new System.Windows.Forms.CheckBox();
-            this.chkExportSource = new System.Windows.Forms.CheckBox();
             this.grbSearchInf.SuspendLayout();
             this.grbProgramList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dtGrvProgramList)).BeginInit();
@@ -219,15 +221,88 @@
             this.dtGrvProgramList.TabIndex = 0;
             this.dtGrvProgramList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dtGrvProgramList_CellValueChanged);
             // 
+            // btnExport
+            // 
+            this.btnExport.Location = new System.Drawing.Point(818, 626);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(101, 37);
+            this.btnExport.TabIndex = 2;
+            this.btnExport.Text = "Export ";
+            this.btnExport.UseVisualStyleBackColor = true;
+            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            // 
+            // btnClear
+            // 
+            this.btnClear.Location = new System.Drawing.Point(958, 626);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(101, 37);
+            this.btnClear.TabIndex = 2;
+            this.btnClear.Text = "Clear All";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // btnSetting
+            // 
+            this.btnSetting.Location = new System.Drawing.Point(20, 626);
+            this.btnSetting.Name = "btnSetting";
+            this.btnSetting.Size = new System.Drawing.Size(101, 37);
+            this.btnSetting.TabIndex = 5;
+            this.btnSetting.Text = "Setting";
+            this.btnSetting.UseVisualStyleBackColor = true;
+            this.btnSetting.Click += new System.EventHandler(this.btnSetting__Click);
+            // 
+            // chkExportProgramList
+            // 
+            this.chkExportProgramList.AutoSize = true;
+            this.chkExportProgramList.Location = new System.Drawing.Point(915, 597);
+            this.chkExportProgramList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.chkExportProgramList.Name = "chkExportProgramList";
+            this.chkExportProgramList.Size = new System.Drawing.Size(117, 17);
+            this.chkExportProgramList.TabIndex = 6;
+            this.chkExportProgramList.Tag = "Export Program List only";
+            this.chkExportProgramList.Text = "Export Program List";
+            this.chkExportProgramList.UseVisualStyleBackColor = true;
+            this.chkExportProgramList.CheckedChanged += new System.EventHandler(this.chkExportProgramList_CheckedChanged);
+            // 
+            // chkExportSource
+            // 
+            this.chkExportSource.AutoSize = true;
+            this.chkExportSource.Location = new System.Drawing.Point(818, 597);
+            this.chkExportSource.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.chkExportSource.Name = "chkExportSource";
+            this.chkExportSource.Size = new System.Drawing.Size(93, 17);
+            this.chkExportSource.TabIndex = 6;
+            this.chkExportSource.Tag = "Export source only";
+            this.chkExportSource.Text = "Export Source";
+            this.chkExportSource.UseVisualStyleBackColor = true;
+            // 
+            // txtInputProjectName
+            // 
+            this.txtInputProjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtInputProjectName.Location = new System.Drawing.Point(431, 630);
+            this.txtInputProjectName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtInputProjectName.Name = "txtInputProjectName";
+            this.txtInputProjectName.Size = new System.Drawing.Size(324, 26);
+            this.txtInputProjectName.TabIndex = 8;
+            // 
+            // lblProjectName
+            // 
+            this.lblProjectName.AutoSize = true;
+            this.lblProjectName.Location = new System.Drawing.Point(429, 603);
+            this.lblProjectName.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblProjectName.Name = "lblProjectName";
+            this.lblProjectName.Size = new System.Drawing.Size(98, 13);
+            this.lblProjectName.TabIndex = 9;
+            this.lblProjectName.Text = "Input Project Name";
+            // 
             // No
             // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.No.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.No.DefaultCellStyle = dataGridViewCellStyle2;
             this.No.FillWeight = 44.08547F;
             this.No.HeaderText = "No";
             this.No.MinimumWidth = 6;
             this.No.Name = "No";
-            this.No.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             // 
             // PathFile
             // 
@@ -236,7 +311,6 @@
             this.PathFile.MinimumWidth = 6;
             this.PathFile.Name = "PathFile";
             this.PathFile.ReadOnly = true;
-            this.PathFile.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             // 
             // FileName
             // 
@@ -245,7 +319,6 @@
             this.FileName.MinimumWidth = 6;
             this.FileName.Name = "FileName";
             this.FileName.ReadOnly = true;
-            this.FileName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             // 
             // Status
             // 
@@ -254,7 +327,6 @@
             this.Status.MinimumWidth = 6;
             this.Status.Name = "Status";
             this.Status.ReadOnly = true;
-            this.Status.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             // 
             // CheckExist
             // 
@@ -277,68 +349,15 @@
             this.Check.HeaderText = "";
             this.Check.MinimumWidth = 6;
             this.Check.Name = "Check";
-            this.Check.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.Check.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            // 
-            // btnExport
-            // 
-            this.btnExport.Location = new System.Drawing.Point(818, 626);
-            this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(101, 37);
-            this.btnExport.TabIndex = 2;
-            this.btnExport.Text = "Export ";
-            this.btnExport.UseVisualStyleBackColor = true;
-            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
-            // 
-            // btnClear
-            // 
-            this.btnClear.Location = new System.Drawing.Point(958, 626);
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(101, 37);
-            this.btnClear.TabIndex = 2;
-            this.btnClear.Text = "Clear";
-            this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-            // 
-            // btnSetting
-            // 
-            this.btnSetting.Location = new System.Drawing.Point(20, 626);
-            this.btnSetting.Name = "btnSetting";
-            this.btnSetting.Size = new System.Drawing.Size(101, 37);
-            this.btnSetting.TabIndex = 5;
-            this.btnSetting.Text = "Setting";
-            this.btnSetting.UseVisualStyleBackColor = true;
-            this.btnSetting.Click += new System.EventHandler(this.btnSetting__Click);
-            // 
-            // chkExportProgramList
-            // 
-            this.chkExportProgramList.AutoSize = true;
-            this.chkExportProgramList.Location = new System.Drawing.Point(915, 597);
-            this.chkExportProgramList.Margin = new System.Windows.Forms.Padding(2);
-            this.chkExportProgramList.Name = "chkExportProgramList";
-            this.chkExportProgramList.Size = new System.Drawing.Size(117, 17);
-            this.chkExportProgramList.TabIndex = 6;
-            this.chkExportProgramList.Tag = "Export Program List only";
-            this.chkExportProgramList.Text = "Export Program List";
-            this.chkExportProgramList.UseVisualStyleBackColor = true;
-            // 
-            // chkExportSource
-            // 
-            this.chkExportSource.AutoSize = true;
-            this.chkExportSource.Location = new System.Drawing.Point(818, 597);
-            this.chkExportSource.Margin = new System.Windows.Forms.Padding(2);
-            this.chkExportSource.Name = "chkExportSource";
-            this.chkExportSource.Size = new System.Drawing.Size(93, 17);
-            this.chkExportSource.TabIndex = 6;
-            this.chkExportSource.Tag = "Export source only";
-            this.chkExportSource.Text = "Export Source";
-            this.chkExportSource.UseVisualStyleBackColor = true;
             // 
             // MainFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1096, 687);
+            this.Controls.Add(this.lblProjectName);
+            this.Controls.Add(this.txtInputProjectName);
             this.Controls.Add(this.chkExportSource);
             this.Controls.Add(this.chkExportProgramList);
             this.Controls.Add(this.btnSetting);
@@ -378,15 +397,17 @@
 		private System.Windows.Forms.RadioButton radChkByPrgList;
   private System.Windows.Forms.DateTimePicker DateTimeGetChangeControl;
         private System.Windows.Forms.Button btnSetting;
-		private System.Windows.Forms.DataGridViewTextBoxColumn No;
-		private System.Windows.Forms.DataGridViewTextBoxColumn PathFile;
-		private System.Windows.Forms.DataGridViewTextBoxColumn FileName;
-		private System.Windows.Forms.DataGridViewTextBoxColumn Status;
-		private System.Windows.Forms.DataGridViewTextBoxColumn CheckExist;
-		private System.Windows.Forms.DataGridViewTextBoxColumn REP;
-		private System.Windows.Forms.DataGridViewCheckBoxColumn Check;
 		private System.Windows.Forms.CheckBox chkExportProgramList;
         private System.Windows.Forms.CheckBox chkExportSource;
+        private System.Windows.Forms.TextBox txtInputProjectName;
+        private System.Windows.Forms.Label lblProjectName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn No;
+        private System.Windows.Forms.DataGridViewTextBoxColumn PathFile;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FileName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Status;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CheckExist;
+        private System.Windows.Forms.DataGridViewTextBoxColumn REP;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Check;
     }
 }
 
