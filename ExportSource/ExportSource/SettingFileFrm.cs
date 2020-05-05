@@ -1,64 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Configuration;
+using System.IO;
 using System.Windows.Forms;
 
 namespace ExportSource
 {
- public partial class chkFileXaml : Form
- {
+	public partial class SettingFileFrm : Form
+	{
+		private List<string> listKey = null;
 
-  // Danh sach duoi file 
-  public static HashSet<String> lstFileExt = new HashSet<string>();
-  public chkFileXaml()
-  {
-   InitializeComponent();
-  }
+		string fileSettingPath = string.Empty;
 
-  private void chkboxSelectAll_CheckedChanged(object sender, EventArgs e)
-  {
-   if (this.chkboxSelectAll.Checked == true)
-   {
-    foreach (Control ctrl in this.Controls)
-    {
-     CheckBox chk = ctrl as CheckBox;
-     if (chk != null)
-     {
-      chk.Checked = true;
-     }
-    }
-   }
-   else
-   {
-    foreach (Control ctrl in this.Controls)
-    {
-     CheckBox chk = ctrl as CheckBox;
-     if (chk != null)
-     {
-      chk.Checked = false;
-     }
-    }
-   }
-  }
+		public SettingFileFrm()
+		{
+			InitializeComponent();
+			txtListKey.ScrollBars = ScrollBars.Both;
+			LoadKeyConfig();
+		}
 
-  private void chkFileXaml_FormClosed(object sender, FormClosedEventArgs e)
-  {
+		private void LoadKeyConfig()
+		{
+            MainFrm mainFrm = new MainFrm();
+            mainFrm.LoadSetting(out fileSettingPath);
+            mainFrm.Close();
+            mainFrm.Dispose();
+            listKey = new List<string>(File.ReadAllLines(fileSettingPath));
 
-   lstFileExt.Clear();
-   foreach (Control ctrl in this.Controls)
-   {
-    CheckBox chk = ctrl as CheckBox;
-    if (chk != null && chk.Checked == true)
-    {
-    lstFileExt.Add(chk.Text);
-    }
-   }
-  }
+			foreach (string i in listKey)
+			{
+				txtListKey.Text += i + "\r\n";
+			}
+		}
 
- }
+		private string[] ListAllKey(string content)
+		{
+			string[] stringSeparators = new string[] { "\r\n" };
+
+			return content.Split(stringSeparators, StringSplitOptions.None);
+		}
+
+		private void chkFileXaml_FormClosed(object sender, FormClosedEventArgs e)
+		{
+			List<string> items = new List<string>(ListAllKey(txtListKey.Text));
+
+			using (StreamWriter writer = new StreamWriter(fileSettingPath))
+			{
+				foreach (string key in items)
+				{
+					// Add new line
+					if (!String.IsNullOrEmpty(key))
+					{
+						writer.WriteLine(key);
+					}
+				}
+
+				writer.Dispose();
+			}
+		}
+	}
 }
