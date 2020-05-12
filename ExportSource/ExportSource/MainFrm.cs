@@ -154,7 +154,7 @@ namespace ExportSource
 
                 this.txtSourcePath.Text = path;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
@@ -840,12 +840,12 @@ namespace ExportSource
                     int rowIndex = 0;
                     int rowCount = dtGrvProgramList.Rows.Count + 4;
                     int rowNoExcel = 0;
+                    int noSequence = 1;
                     ExcelApp.Range excelCellrange;
                     ExcelApp.Borders borderdetail;
                     rowNoExcel = 4;
                     for (rowIndex = 4; rowIndex < rowCount; rowIndex++)
                     {
-
                         DataGridViewRow dgRow = dtGrvProgramList.Rows[rowIndex - 4];
 
                         if (Convert.ToBoolean(dgRow.Cells[GrvColumnName.DRV_CHKBOX_SELECT].Value) == false)
@@ -865,7 +865,7 @@ namespace ExportSource
                         }
 
                         // No.
-                        currentWorksheet.Cells[rowNoExcel + 2, 1] = dgRow.Cells[GrvColumnName.DRV_NO].Value;
+                        currentWorksheet.Cells[rowNoExcel + 2, 1] = noSequence;
 
                         // Date
                         currentWorksheet.Cells[rowNoExcel + 2, 2] = DateTime.Now.ToString("yyyy/MM/dd");
@@ -917,6 +917,7 @@ namespace ExportSource
                         excelCellrange.EntireRow.AutoFit();
 
                         rowNoExcel++;
+                        noSequence++;
                     }
 
                     excelCellrange = currentWorksheet.Range[currentWorksheet.Cells[6, 1], currentWorksheet.Cells[rowNoExcel + 2, 15]];
